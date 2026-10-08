@@ -22,7 +22,7 @@ Four people, four lanes, no shared files, and nobody waits on anybody. Every lan
 |---|---|---|---|
 | A: Risk and agent | to be named | Turn hourly weather into a safe, checked plan | `src/risk.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/hi.json`, `src/copy/en.json`, `tests/test_risk.py`, `tests/test_guard.py` |
 | B: App screens | to be named | Build every screen of the React app | Everything under `web/` except `web/android/` and `web/capacitor.config.json` |
-| C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `CLAUDE.md`, requirements files, `pytest.ini` |
+| C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `PLAN.md`, requirements files, `pytest.ini` |
 | D: Data | Nemat | Supply the weather and cooling data, and the small modules that read it | `src/forecast.py`, `src/cooling.py`, `tests/test_forecast.py`, `tests/test_cooling.py`, `data/cooling_points_jaipur.json`, `scripts/seed_cooling_points.py`, `src/copy/red_flag.json` |
 
 ### A: Risk and agent
@@ -107,6 +107,69 @@ Work runs in three phases. Until Friday 10:00 everyone builds alone against cont
 **Friday-evening milestone:** on a real phone, location in and plan out, against the deployed backend.
 
 If the Friday-evening milestone slips, cut in this order: cooling points, then the 06:00 schedule, then the voice note, then the APK (ship the web link alone). Never cut setup, the daily plan or the red-flag message.
+
+## Checklists
+
+For tracking. Tick your own boxes as you finish them; the Timeline above says when each is due.
+
+**A: Risk and agent**
+
+- [ ] `risk.py` and its tests passing (Thu night)
+- [ ] Agent returns a plan from fixture hours (Fri 10:00)
+- [ ] `guard.py` and its tests, including the template fallback (Fri 10:00)
+- [ ] Band action lines and template sentences in `src/copy/hi.json` and `en.json` (Fri 10:00)
+- [ ] `planner` runs on the real forecast and saves to `Plans` (Fri evening)
+- [ ] Replay mode works for a past date (Fri evening)
+- [ ] Voice mode, and the cooling tool wired in (Fri night)
+- [ ] Screen recording of the plan flows (Sat afternoon)
+
+**B: App screens**
+
+- [ ] Setup screen on fixtures (Thu night)
+- [ ] Plan screen on fixtures, with the colour strip and red-flag box (Thu night)
+- [ ] Screens call `api.ts`, with polling, loading, failed and retry states (Fri 10:00)
+- [ ] Switched from fixtures to the live API (Fri evening)
+- [ ] Voice note player and share (Fri evening)
+- [ ] Hindi and English toggle; every string in the copy files (Fri night)
+- [ ] Fixes from the Hindi review (Sat 12:00)
+- [ ] Screen recording of the app (Sat afternoon)
+
+**C: Infra, API and release**
+
+- [x] Repo, brief and SAM template (template passes `sam validate --lint`)
+- [x] `api.py` with its tests passing, and `voice.py`
+- [x] App scaffold in `web/`, and a debug APK built from it
+- [ ] AWS profile, budget alert and Bedrock access (Thu night)
+- [ ] First deploy done and the live link posted (Fri 10:00)
+- [ ] Bedrock-only access handed to A (Fri 10:00)
+- [ ] Redeployed with A's planner (Fri evening)
+- [ ] APK built from B's code and run on a real phone: location prompt and share sheet checked (Fri evening)
+- [ ] APK download hosted; cooling points seeded; 06:00 schedule checked; logs clean (Fri night)
+- [ ] README finalised and architecture slide made (Sat 12:00)
+- [ ] App installed and tested from a phone outside the team (Sat afternoon)
+- [ ] All four members verified on Builder Center
+- [ ] Repo public, links checked (Sun)
+
+**D: Data**
+
+- [ ] `forecast.py` and its test, against real Open-Meteo responses (Thu night)
+- [ ] Replay date chosen: a real May 2025 Jaipur heat day (Fri 10:00)
+- [ ] `src/copy/red_flag.json` typed in by hand and checked by a native speaker (Fri 10:00)
+- [ ] 10 hand-verified cooling points in `data/cooling_points_jaipur.json` (Fri evening)
+- [ ] `cooling.py` and its test (Fri evening)
+- [ ] Data check: the app's replay numbers match the raw Open-Meteo response (Fri night)
+
+**Unassigned (needs an owner)**
+
+The video is a hard requirement of the submission.
+
+- [ ] Video owner named (Thu night)
+- [ ] Video script v1 (Fri 10:00)
+- [ ] Real-world footage filmed (Fri evening)
+- [ ] Hindi text from A and B reviewed by a native speaker (Sat 12:00)
+- [ ] Voiceover and edit (Sat afternoon)
+- [ ] Final cut uploaded and submitted, at least 3 hours before the deadline (Sun)
+- [ ] Optional: 3 to 5 interviews with supervisors or workers. Without them, quote no users
 
 ## The hackathon
 
@@ -373,7 +436,7 @@ One repo, one owner per file, so the three Claude Code sessions never edit the s
 
 ```
 repo-root/
-  CLAUDE.md                     # this brief (C)
+  PLAN.md                       # this brief (C)
   README.md                     # problem, architecture, AWS services, setup (C)
   template.yaml                 # SAM: CloudFront, buckets, API, 2 Lambdas, 3 tables, schedule, IAM (C)
   samconfig.toml                # deploy settings (C)
@@ -426,7 +489,7 @@ repo-root/
 - **Tests** run from the repo root with `pytest`; they also use flat imports.
 - **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text is separate, in `src/copy/red_flag.json` as `{"hi": "...", "en": "..."}`; `api` returns an error for a dangerous plan if it is missing.
 - **`planner` is never retried** on failure, so a crash cannot build or voice the same plan twice. Set the status to `failed` and log.
-- **The one shared edit.** The Team plan checklist in `README.md` is for tracking: every lane ticks its own boxes there. Pull first, tick only your own, and change nothing else in the README.
+- **The one shared edit.** The Checklists section of this file is for tracking: every lane ticks its own boxes there. Pull first, tick only your own, and change nothing else in `PLAN.md`.
 - **The APK is a build output.** It is never committed; C builds it from `main` and uploads it.
 - **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`; only C runs the Android build.
 - **`web/src/api.ts` is the API contract in TypeScript**: the types and one function per route. If the contract changes, change this brief first, then that file.
@@ -437,7 +500,7 @@ repo-root/
 ### Setup, in order
 
 1. Everyone: create and verify an AWS Builder Center student profile.
-2. Everyone with a session: pull the repo. This brief loads automatically as `CLAUDE.md`.
+2. Everyone: pull the repo. If you use Claude Code, start each session by telling it to read `PLAN.md`; it is not loaded automatically.
 3. C: set up the `opuscube` AWS profile and a Budgets alert at $10.
 4. C: get Bedrock access for Claude Haiku in `us-east-1`, and create a Bedrock-only IAM user for A.
 5. A, C and D: install Python 3.11+, then `pip install -r requirements.txt`. C also needs AWS CLI v2, SAM CLI and Docker.

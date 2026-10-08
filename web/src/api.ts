@@ -1,4 +1,4 @@
-// The API contract from CLAUDE.md, in TypeScript. Change the brief first, then this file.
+// The API contract from PLAN.md, in TypeScript. Change the brief first, then this file.
 
 const BASE: string = import.meta.env.VITE_API_BASE ?? '';
 
