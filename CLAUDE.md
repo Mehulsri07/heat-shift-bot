@@ -23,7 +23,7 @@ Four people, four lanes, no shared files. A, B and C each drive one Claude Code 
 | A: Agent and risk | to be named | Turn a forecast into a safe, checked plan | `src/risk.py`, `src/forecast.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/*.json`, `tests/test_risk.py`, `tests/test_guard.py` |
 | B: App | to be named | Build the React app and ship it as an Android APK | Everything under `web/` |
 | C: Infra and API | Mehul | Run AWS, the API and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `scripts/`, `tests/test_api.py`, `README.md`, `CLAUDE.md`, requirements files |
-| D: Product and video | to be named | Ground the product in real users and make the video | `data/cooling_points_jaipur.json`, the red-flag wording, the video |
+| D: Product and video | Nemat | Ground the product in real users and make the video | `data/cooling_points_jaipur.json`, the red-flag wording, the video |
 
 ### A: Agent and risk
 
@@ -378,7 +378,8 @@ repo-root/
   web/                          # the app (B owns everything below)
     package.json
     vite.config.ts
-    capacitor.config.ts
+    capacitor.config.json
+    .env.example                # API base URL and dev proxy target
     index.html
     src/
       main.tsx, App.tsx
@@ -405,6 +406,11 @@ repo-root/
 - **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text must sit under the key `red_flag` in both files; `api` returns an error for a dangerous plan if it is missing.
 - **`planner` is never retried** on failure, so a crash cannot build or voice the same plan twice. Set the status to `failed` and log.
 - **The APK is a build output.** It is never committed; B hands it to C for upload.
+- **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`.
+- **`web/src/api.ts` is the API contract in TypeScript**: the types and one function per route. If the contract changes, change this brief first, then that file.
+- **App ID and name.** The Android app ID is `com.opuscube.app` and must not change once people have installed the app. The display name `OpusCube` is a placeholder, set in `web/capacitor.config.json` and `web/android/app/src/main/res/values/strings.xml`.
+- **Capacitor's config is JSON on purpose.** Its CLI cannot load a `.ts` config with TypeScript 7 on Node 22.
+- **App environment.** Copy `web/.env.example` to `web/.env.local` and fill it in; `.env.local` is never committed.
 
 ### Setup, in order
 
