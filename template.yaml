@@ -1,17 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Heat-safe shift planner Telegram bot (webhook + planner)
+Description: Heat-safe shift planner (app hosting, JSON API, planner)
 
 Parameters:
   BedrockModelId:
     Type: String
     Description: Bedrock model ID or inference profile ID for Claude Haiku
-  TelegramTokenParam:
-    Type: String
-    Default: /hackathon/telegram_token
-  WebhookSecretParam:
-    Type: String
-    Default: /hackathon/webhook_secret
 
 Globals:
   Function:
@@ -25,16 +19,32 @@ Globals:
         COOLING_TABLE: !Ref CoolingPointsTable
         AUDIO_BUCKET: !Ref AudioBucket
         BEDROCK_MODEL_ID: !Ref BedrockModelId
-        TELEGRAM_TOKEN_PARAM: !Ref TelegramTokenParam
-        WEBHOOK_SECRET_PARAM: !Ref WebhookSecretParam
         POLLY_VOICE_ID: Kajal
         TZ_NAME: Asia/Kolkata
 
 Resources:
-  WebhookFunction:
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      # The Android app's screens load from https://localhost inside the APK,
+      # so its API calls are cross-origin. The web build is same-origin via CloudFront.
+      CorsConfiguration:
+        AllowOrigins:
+          - https://localhost
+        AllowMethods:
+          - GET
+          - POST
+        AllowHeaders:
+          - content-type
+      # The API is public and triggers paid Bedrock calls.
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 20
+        ThrottlingRateLimit: 10
+
+  ApiFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: handlers.webhook.handler
+      Handler: handlers.api.handler
       Timeout: 10
       Environment:
         Variables:
@@ -42,22 +52,20 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SitesTable
-        - DynamoDBReadPolicy:
+        - DynamoDBCrudPolicy:
             TableName: !Ref PlansTable
         - LambdaInvokePolicy:
             FunctionName: !Ref PlannerFunction
-        - Statement:
-            - Effect: Allow
-              Action: ssm:GetParameter
-              Resource:
-                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${TelegramTokenParam}
-                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${WebhookSecretParam}
+        # Signs time-limited links to the voice notes.
+        - S3ReadPolicy:
+            BucketName: !Ref AudioBucket
       Events:
-        Telegram:
+        Api:
           Type: HttpApi
           Properties:
-            Path: /telegram
-            Method: POST
+            ApiId: !Ref HttpApi
+            Path: /api/{proxy+}
+            Method: ANY
 
   PlannerFunction:
     Type: AWS::Serverless::Function
@@ -65,7 +73,7 @@ Resources:
       Handler: handlers.planner.handler
       Timeout: 120
       MemorySize: 1024
-      # No async retries: a failed run must not send the same plan twice.
+      # No async retries: a failed run must not build or voice the same plan twice.
       EventInvokeConfig:
         MaximumRetryAttempts: 0
       Policies:
@@ -78,9 +86,6 @@ Resources:
         - S3CrudPolicy:
             BucketName: !Ref AudioBucket
         - Statement:
-            - Effect: Allow
-              Action: ssm:GetParameter
-              Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${TelegramTokenParam}
             - Effect: Allow
               Action: polly:SynthesizeSpeech
               Resource: '*'
@@ -142,10 +147,75 @@ Resources:
   AudioBucket:
     Type: AWS::S3::Bucket
 
+  # Holds the web build and the APK download; private, read only through CloudFront.
+  WebBucket:
+    Type: AWS::S3::Bucket
+
+  WebBucketAccess:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub ${AWS::StackName}-web
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  WebBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${WebBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}
+
+  # One HTTPS domain for the web build, the APK download and the API.
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Origins:
+          - Id: web
+            DomainName: !GetAtt WebBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt WebBucketAccess.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+          - Id: api
+            DomainName: !Sub ${HttpApi}.execute-api.${AWS::Region}.amazonaws.com
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+        DefaultCacheBehavior:
+          TargetOriginId: web
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # managed CachingOptimized
+        CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # managed CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # managed AllViewerExceptHostHeader
+
 Outputs:
-  WebhookUrl:
-    Description: Pass this to scripts/set_webhook.py
-    Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/telegram
+  AppUrl:
+    Description: The app's link; also the value of VITE_API_BASE for the APK build
+    Value: !Sub https://${Distribution.DomainName}
+  WebBucketName:
+    Description: Sync web/dist and the APK here
+    Value: !Ref WebBucket
+  DistributionId:
+    Description: Invalidate this after each web upload
+    Value: !Ref Distribution
   CoolingTable:
     Description: Set as COOLING_TABLE for scripts/seed_cooling_points.py
     Value: !Ref CoolingPointsTable
