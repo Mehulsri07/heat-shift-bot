@@ -95,6 +95,95 @@ aws s3 cp app.apk s3://<WebBucketName>/download/app.apk --content-type applicati
 AWS_DEFAULT_REGION=us-east-1 COOLING_TABLE=<CoolingTable> python scripts/seed_cooling_points.py
 ```
 
+## Team plan
+
+The working plan until submission. `CLAUDE.md` holds the full brief, the API contract and the rules; this section is for tracking who does what by when. Tick your own boxes as you finish them.
+
+### Lanes
+
+| Role | Person | Builds |
+|---|---|---|
+| A: Risk and agent | to be named | Risk engine, Strands agent, output guard, `planner`, backend text |
+| B: App screens | to be named | Every screen of the React app |
+| C: Infra, API and release | Mehul | AWS, the API, the voice module, the Android build, every deploy |
+| D: Data, content and video | Nemat | `forecast.py`, `cooling.py`, cooling data, the red-flag wording, the video |
+
+Nobody shares a file. Each pair of lanes meets at one contract (a function signature, the API, or a file format), listed under "Contracts between lanes" in `CLAUDE.md`, and codes against it with labelled fixtures until the real thing lands.
+
+### Phases
+
+| Phase | When (IST) | What happens |
+|---|---|---|
+| 1. Build alone | Until Fri 9 Oct, 10:00 | Everyone builds against contracts and fixtures. No lane waits on another |
+| 2. Join up | Fri 9 Oct, 10:00 to night | In this order: D's forecast into A's planner, A's planner into C's deploy, C's live link into B's app |
+| 3. Freeze and record | Sat 10 Oct, 12:00 onwards | Feature freeze at 12:00. Bug fixes, screen recordings, video |
+| 4. Submit | Sun 11 Oct | Repo public, final cut uploaded, submitted at least 3 hours before the deadline |
+
+**Friday-evening milestone:** on a real phone, location in and plan out, against the deployed backend.
+
+### A: Risk and agent
+
+- [ ] `risk.py` and its tests passing (Thu night)
+- [ ] Agent returns a plan from fixture hours (Fri 10:00)
+- [ ] `guard.py` and its tests, including the template fallback (Fri 10:00)
+- [ ] Band action lines and template sentences in `src/copy/hi.json` and `en.json` (Fri 10:00)
+- [ ] `planner` runs on the real forecast and saves to `Plans` (Fri evening)
+- [ ] Replay mode works for a past date (Fri evening)
+- [ ] Voice mode, and the cooling tool wired in (Fri night)
+- [ ] Screen recording of the plan flows (Sat afternoon)
+
+### B: App screens
+
+- [ ] Setup screen on fixtures (Thu night)
+- [ ] Plan screen on fixtures, with the colour strip and red-flag box (Thu night)
+- [ ] Screens call `api.ts`, with polling, loading, failed and retry states (Fri 10:00)
+- [ ] Switched from fixtures to the live API (Fri evening)
+- [ ] Voice note player and share (Fri evening)
+- [ ] Hindi and English toggle; every string in the copy files (Fri night)
+- [ ] Fixes from the Hindi review (Sat 12:00)
+- [ ] Screen recording of the app (Sat afternoon)
+
+### C: Infra, API and release
+
+- [x] Repo, brief and SAM template (template passes `sam validate --lint`)
+- [x] `api.py` with its tests passing, and `voice.py`
+- [x] App scaffold in `web/`, and a debug APK built from it
+- [ ] AWS profile, budget alert and Bedrock access (Thu night)
+- [ ] First deploy done and the live link posted (Fri 10:00)
+- [ ] Bedrock-only access handed to A (Fri 10:00)
+- [ ] Redeployed with A's planner (Fri evening)
+- [ ] APK built from B's code and run on a real phone: location prompt and share sheet checked (Fri evening)
+- [ ] APK download hosted; 06:00 schedule checked; logs clean (Fri night)
+- [ ] README finalised and architecture slide made (Sat 12:00)
+- [ ] App installed and tested from a phone outside the team (Sat afternoon)
+- [ ] All four members verified on Builder Center
+- [ ] Repo public, links checked (Sun)
+
+### D: Data, content and video
+
+- [ ] `forecast.py` and its test, against real Open-Meteo responses (Thu night)
+- [ ] Replay date chosen: a real May 2025 Jaipur heat day (Fri 10:00)
+- [ ] `src/copy/red_flag.json` written by hand and reviewed by a native speaker (Fri 10:00)
+- [ ] `cooling.py` and its test (Fri evening)
+- [ ] 10 hand-verified cooling points in `data/cooling_points_jaipur.json` (Fri evening)
+- [ ] 3 to 5 interviews with supervisors or workers
+- [ ] Real-world footage filmed; video script v1 (Fri night)
+- [ ] Hindi text from A and B reviewed by a native speaker (Sat 12:00)
+- [ ] Voiceover and edit (Sat afternoon)
+- [ ] Final cut uploaded and submitted (Sun)
+
+### If things slip
+
+- **`forecast.py` is on the critical path.** If it is not on `main` by Friday 10:00 IST, A writes it and D moves to `cooling.py`.
+- **If the Friday-evening milestone slips**, cut in this order: cooling points, then the 06:00 schedule, then the voice note, then the APK (ship the web link alone). Never cut setup, the daily plan or the red-flag message.
+
+### Open decisions
+
+- [ ] Who takes roles A and B
+- [ ] App name (the scaffold uses the placeholder `OpusCube`)
+- [ ] `DANGER` action wording: the stop window counts `DANGER` hours, but the action says "light tasks only"
+- [ ] Exact submission cut-off time and time zone, from the hackathon page
+
 ## Attribution
 
 Weather data by [Open-Meteo](https://open-meteo.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

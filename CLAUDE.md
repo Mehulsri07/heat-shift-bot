@@ -423,6 +423,7 @@ repo-root/
 - **Tests** run from the repo root with `pytest`; they also use flat imports.
 - **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text is separate, in `src/copy/red_flag.json` as `{"hi": "...", "en": "..."}`; `api` returns an error for a dangerous plan if it is missing.
 - **`planner` is never retried** on failure, so a crash cannot build or voice the same plan twice. Set the status to `failed` and log.
+- **The one shared edit.** The Team plan checklist in `README.md` is for tracking: every lane ticks its own boxes there. Pull first, tick only your own, and change nothing else in the README.
 - **The APK is a build output.** It is never committed; C builds it from `main` and uploads it.
 - **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`; only C runs the Android build.
 - **`web/src/api.ts` is the API contract in TypeScript**: the types and one function per route. If the contract changes, change this brief first, then that file.
