@@ -8,7 +8,7 @@ It is team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon (He
 
 ### Open decisions
 
-- **App name.** Needed for the icon label and the Android package ID. B uses a placeholder until the team decides.
+- **App name.** Needed for the icon label. The scaffold uses the placeholder `OpusCube` until the team decides.
 - **Stop window against the `DANGER` action text.** The stop window counts `DANGER` hours, but the `DANGER` action says "light tasks only". Recommended fix: change the `DANGER` action to "Stop outdoor work; light tasks in shade only". Needs a human decision before A writes the plan template.
 - **Exact deadline.** Confirm the cut-off time and time zone on the hackathon page.
 - **Names.** Who takes roles A, B and D.
@@ -16,78 +16,92 @@ It is team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon (He
 
 ## Workload division
 
-Four people, four lanes, no shared files. A, B and C each drive one Claude Code session; D writes no code. A owns the brain, B owns everything the user touches, C owns AWS and the API between them, and D owns the story and the real-world facts.
+Four people, four lanes, no shared files, and nobody waits on anybody. Every lane builds against a contract written in this brief and uses labelled fixtures until the real thing lands. A, B and C each drive a Claude Code session. D writes code too, and also owns the real-world facts and the video.
 
 | Role | Person | One-line job | Files owned |
 |---|---|---|---|
-| A: Agent and risk | to be named | Turn a forecast into a safe, checked plan | `src/risk.py`, `src/forecast.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/*.json`, `tests/test_risk.py`, `tests/test_guard.py` |
-| B: App | to be named | Build the React app and ship it as an Android APK | Everything under `web/` |
-| C: Infra and API | Mehul | Run AWS, the API and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `scripts/`, `tests/test_api.py`, `README.md`, `CLAUDE.md`, requirements files |
-| D: Product and video | Nemat | Ground the product in real users and make the video | `data/cooling_points_jaipur.json`, the red-flag wording, the video |
+| A: Risk and agent | to be named | Turn hourly weather into a safe, checked plan | `src/risk.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/hi.json`, `src/copy/en.json`, `tests/test_risk.py`, `tests/test_guard.py` |
+| B: App screens | to be named | Build every screen of the React app | Everything under `web/` except `web/android/` and `web/capacitor.config.json` |
+| C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `CLAUDE.md`, requirements files, `pytest.ini` |
+| D: Data, content and video | Nemat | Supply the weather and cooling data, the safety wording and the video | `src/forecast.py`, `src/cooling.py`, `tests/test_forecast.py`, `tests/test_cooling.py`, `data/cooling_points_jaipur.json`, `scripts/seed_cooling_points.py`, `src/copy/red_flag.json`, the video |
 
-### A: Agent and risk
+### A: Risk and agent
 
-- Heat index and band logic in `risk.py`, with the full test list from the Heat risk engine section.
-- Open-Meteo client for forecast and past dates in `forecast.py`.
-- Strands agent with its three tools and system prompt in `agent.py`.
-- Output guard and the template fallback plan in `guard.py`.
-- `planner`: build the plan, save it to `Plans` with a status, and call C's `make_voice_note` in voice mode.
-- Backend fixed text in `src/copy/hi.json` and `en.json`: band actions and the template plan. A commits the red-flag wording exactly as D supplies it and never writes it.
+- `risk.py`: heat index, bands, direct-sun bump and stop window, with the full test list from the Heat risk engine section.
+- `agent.py`: the Strands agent, its system prompt and three tools. The forecast and cooling tools are thin wrappers around D's functions.
+- `guard.py`: the number check and the template fallback plan, with tests.
+- `planner.py`: plan mode, voice mode (calls C's `make_voice_note`) and the daily run; saves the `Plans` row with a status.
+- `src/copy/hi.json` and `en.json`: the band action lines and the template sentences. D arranges the native-speaker review.
+- Starts on labelled fixture hours, so nothing waits for D's forecast client.
 
-### B: App
+### B: App screens
 
-- React, Vite and TypeScript app in `web/`: setup screen, plan screen, voice note player.
+- Setup screen, plan screen and voice note player in `web/src/`.
 - Hour-by-hour colour strip, stop-work window, red-flag box, Hindi and English toggle.
-- API client that polls for the plan, with loading, failed and retry states.
-- Android build with Capacitor: location permission, share sheet, app icon and name.
+- Polling for the plan through `web/src/api.ts`, with loading, failed and retry states.
+- Location and share through the Capacitor plugins. They also work in a browser, so B needs no Android Studio.
 - Every UI string in `web/src/copy/hi.json` and `en.json`.
-- Hands the built APK to C for hosting. Builds against labelled fixtures until C's API is live.
+- Starts on labelled fixtures in `web/src/fixtures/`, so nothing waits for the live API.
 
-### C: Infra and API
+### C: Infra, API and release
 
 - AWS profile, budget alert, Bedrock access, and a Bedrock-only IAM user so A can run the agent locally.
-- SAM template: CloudFront, web and audio buckets, the HTTP API, both Lambdas, three tables, the 06:00 schedule, IAM and throttling.
-- `api.py`: validation, the routes in the API contract, and the hand-off to `planner`.
-- `voice.py`: Polly to S3, returning the audio key.
-- Every deploy: backend, web build and the APK download. Posts the live link in the team chat.
+- SAM template and every backend deploy; posts the live link in the team chat.
+- `api.py` and `voice.py` (both already in the repo, with tests for the API).
+- Android release: builds the APK from B's code, installs it on a real phone, checks the location prompt and the share sheet, and hosts the download.
 - README, architecture slide, and keeping this brief current.
+- Chases Builder Center verification for all four members, and tests the app from a phone outside the team.
 
-### D: Product and video
+### D: Data, content and video
+
+Code:
+
+- `forecast.py`: the Open-Meteo client, forecast and past dates, with a test. Do this first: the replay date and A's integration both need it.
+- `cooling.py`: nearest cooling points from DynamoDB by straight-line distance, with a test.
+- `scripts/seed_cooling_points.py` (already written; D owns it now) and the data file it loads.
+- `src/copy/red_flag.json`: the red-flag message in Hindi and English, written by a human and reviewed by a native speaker. No Claude session may write or reword it.
+
+Product and video:
 
 - Talk to 3 to 5 real supervisors or workers, and bring back what they said, word for word.
-- Collect 10 hand-verified cooling points in Jaipur for `data/cooling_points_jaipur.json`.
-- Write the red-flag message in Hindi and English and get it reviewed by a native speaker. No Claude session may write or reword it.
-- Arrange the native-speaker review of all other Hindi text from A and B.
-- Pick the May 2025 replay date, script the video, film, record the voiceover, edit and submit.
-- Chase Builder Center verification for all four members, and test the app on a phone outside the team.
+- Collect 10 hand-verified cooling points in Jaipur.
+- Pick the May 2025 replay date, using the forecast client to look at the real numbers.
+- Arrange the native-speaker review of the Hindi text from A and B.
+- Script the video, film, record the voiceover, edit and submit. A, B and C supply the screen recordings.
 
-### Hand-offs between lanes
+### Contracts between lanes
 
-| From | To | What | Needed by |
+Each row is the only thing two lanes need to agree on. The consumer codes against the contract now and swaps in the real thing when it lands.
+
+| Provider | Consumer | Contract | Until it lands, the consumer uses |
 |---|---|---|---|
-| C | B | API contract (in this brief), then the live API link | Thursday night, then Friday morning |
-| C | A | Bedrock-only AWS access; the `make_voice_note` function | Thursday night; Friday evening |
-| A | C | The `Plans` row exactly as the data model defines it | Friday morning |
-| D | A | Red-flag wording, both languages; the replay date | Friday morning |
-| D | C | Cooling points file | Friday evening |
-| B | C | The built APK for hosting | Friday evening, final by Saturday 12:00 |
+| C: `api.py` | B | The API contract section, mirrored in `web/src/api.ts` | Labelled fixtures in `web/src/fixtures/` |
+| D: `forecast.get_hourly(lat: float, lon: float, date: str) -> list[dict]` | A | 24 items, one per hour of that local date in `Asia/Kolkata`: `{"hour": "HH:MM", "temp_c": float, "rh": float}`. A past date returns historical weather. Raises `ForecastError` on any failure | A labelled fixture list |
+| D: `cooling.nearest(lat: float, lon: float, limit: int = 3) -> list[dict]` | A | Nearest first: `{"name", "type", "lat", "lon", "distance_km"}`. An empty list when there are no points | An empty list |
+| C: `voice.make_voice_note(text: str, language: str) -> str` | A | Returns the S3 key of the MP3 | Already in the repo |
+| A: the `Plans` row | C | The data model section | Fixture rows in `tests/test_api.py` |
+| D: `src/copy/red_flag.json` | C | `{"hi": "...", "en": "..."}` | `api` answers a dangerous plan with an error until the file exists |
+| B: the web build | C | `npm run build` passes on `main` | The scaffold already in `web/` |
+
+**Fallback for the critical path:** `forecast.py` is the one piece of D's code the core flow cannot run without. If it is not on `main` by Friday 10:00 IST, A writes it and D moves to `cooling.py`.
 
 ## Timeline
 
 Feature freeze is **Saturday 10 October, 12:00 IST**. After that we only fix bugs, record and submit.
 
+Work runs in three phases. Until Friday 10:00 everyone builds alone against contracts and fixtures. From Friday 10:00 the lanes join up in one fixed order: D's forecast into A's planner, A's planner into C's deploy, C's live link into B's app. Saturday is fixes, recording and the video.
+
 | When | A | B | C | D |
 |---|---|---|---|---|
-| Thu 8 Oct, night | `risk.py` and its tests passing; forecast client working | React app scaffolded; an empty Capacitor shell built and installed on a real phone; both screens on fixtures | This brief in the repo; AWS profile and Bedrock access; first deploy with CloudFront | Builder Center for all; line up 3 to 5 people; choose the replay date |
-| Fri 9 Oct, morning | Agent returns a plan for a hard-coded site; `planner` saves it to `Plans` | App wired to the live API: create a site, poll the plan, colour strip | API live on real data; throttling checked | Interviews; 10 cooling points; red-flag wording reviewed; video script v1 |
-| Fri 9 Oct, evening | Replay mode and the output guard | Voice player and share; Hindi and English toggle; first real APK | APK download hosted; 06:00 schedule; clean logs | Film real-world footage |
-| Sat 10 Oct, to 12:00 | Bug fixes only | Fixes from the Hindi review; final APK | README and architecture slide | Final storyboard; Hindi review signed off |
-| Sat 10 Oct, afternoon | Screen-record the plan flows | Screen-record the app on a phone | Freeze; install and test from a fresh phone | Voiceover and edit |
+| Thu 8 Oct, night | `risk.py` and its tests passing | Setup and plan screens on fixtures | AWS profile, Bedrock access, first deploy; debug APK built from the scaffold | `forecast.py` and its test, against real Open-Meteo responses; Builder Center profile |
+| Fri 9 Oct, to 10:00 | Agent returns a plan from fixture hours; `guard.py` and its tests | Screens call `api.ts` with polling; colour strip | Live link posted; Bedrock-only access handed to A | Replay date chosen; `red_flag.json` written and reviewed; first interviews |
+| Fri 9 Oct, 10:00 to evening | `planner` on the real forecast, saving to `Plans`; replay mode | Switch from fixtures to the live API; voice player and share | Redeploy with A's planner; APK from B's code on a real phone | `cooling.py` and its test; 10 cooling points seeded; film real-world footage |
+| Fri 9 Oct, night | Voice mode; cooling tool wired in | Hindi and English toggle; error states | APK download hosted; 06:00 schedule; clean logs | Video script v1; remaining interviews |
+| Sat 10 Oct, to 12:00 | Bug fixes only | Fixes from the Hindi review | README and architecture slide; final APK | Hindi review signed off; final storyboard |
+| Sat 10 Oct, afternoon | Screen-record the plan flows | Screen-record the app | Freeze; install and test from a fresh phone | Voiceover and edit |
 | Sun 11 Oct | Standby | Standby | Repo public, links checked | Final cut, upload, submit early |
 
 **Friday-evening milestone:** on a real phone, location in and plan out, against the deployed backend.
-
-B proves the Android build on Thursday night, before writing any screens, because the toolchain is the biggest unknown in this plan.
 
 If the Friday-evening milestone slips, cut in this order: cooling points, then the 06:00 schedule, then the voice note, then the APK (ship the web link alone). Never cut setup, the daily plan or the red-flag message.
 
@@ -158,7 +172,7 @@ Every hour in the strip shows its band name and temperature as text as well as c
 
 ### Flow 4: Red-flag safety message (fixed text)
 
-Whenever any hour is rated Danger or worse, the plan screen shows a fixed, human-reviewed message: confusion, stopped sweating, fainting or very hot skin are signs of heat stroke; move the person to shade, cool them with water and call 108 immediately. This text lives in `src/copy/hi.json` and `src/copy/en.json` under the key `red_flag`, is attached by the API when the plan is read, and is shown word for word. It is never generated by the model and never reworded in the app.
+Whenever any hour is rated Danger or worse, the plan screen shows a fixed, human-reviewed message: confusion, stopped sweating, fainting or very hot skin are signs of heat stroke; move the person to shade, cool them with water and call 108 immediately. This text lives in `src/copy/red_flag.json`, a file only humans edit, is attached by the API when the plan is read, and is shown word for word. It is never generated by the model and never reworded in the app.
 
 ### Demo-only: replay mode
 
@@ -334,9 +348,9 @@ Creating a site does not start a plan; the app requests it. Any route can also r
 
 | Tool | Signature | Returns |
 |---|---|---|
-| `get_hourly_forecast` | `(lat: float, lon: float, date: str) -> list[dict]` | Hourly `temp_c` and `rh` for that local date; uses the archive API if the date is in the past |
+| `get_hourly_forecast` | `(lat: float, lon: float, date: str) -> list[dict]` | Hourly `temp_c` and `rh` for that local date; a thin wrapper around D's `forecast.get_hourly` |
 | `score_hours` | `(hours: list[dict], direct_sun: bool, shift_start: str, shift_end: str) -> dict` | Output of `risk.py`: per-hour bands, `stop_window`, `max_band` |
-| `nearest_cooling_points` | `(lat: float, lon: float, limit: int = 3) -> list[dict]` | Closest points from `CoolingPoints` by straight-line distance |
+| `nearest_cooling_points` | `(lat: float, lon: float, limit: int = 3) -> list[dict]` | Closest points from `CoolingPoints`; a thin wrapper around D's `cooling.nearest` |
 
 `make_voice_note(text: str, language: str) -> str` is not an agent tool. It is a plain function in `src/voice.py` (C) that `planner` calls in voice mode: Polly MP3 written to S3, returns the S3 key. The model does not decide whether a voice note gets made.
 
@@ -365,7 +379,8 @@ repo-root/
   src/
     requirements.txt            # runtime pins, packaged by SAM (C)
     risk.py                     # heat index + bands, no I/O (A)
-    forecast.py                 # Open-Meteo forecast + archive client (A)
+    forecast.py                 # Open-Meteo forecast + archive client (D)
+    cooling.py                  # nearest cooling points (D)
     agent.py                    # Strands agent, tools, system prompt (A)
     guard.py                    # output number check + template fallback (A)
     voice.py                    # Polly -> S3 (C)
@@ -373,12 +388,13 @@ repo-root/
       api.py                    # routes, validation, hand-off to planner (C)
       planner.py                # build and save the plan; voice mode; daily run (A)
     copy/
-      hi.json                   # backend fixed Hindi text, incl. red-flag text (A commits, D writes)
-      en.json                   # backend fixed English text (A commits, D writes)
-  web/                          # the app (B owns everything below)
+      hi.json                   # band actions and template sentences, Hindi (A)
+      en.json                   # band actions and template sentences, English (A)
+      red_flag.json             # the fixed red-flag message, both languages; humans only (D)
+  web/                          # the app (B, except the two C entries marked below)
     package.json
     vite.config.ts
-    capacitor.config.json
+    capacitor.config.json       # app ID and name (C)
     .env.example                # API base URL and dev proxy target
     index.html
     src/
@@ -387,14 +403,16 @@ repo-root/
       screens/                  # Setup and Plan
       copy/hi.json, en.json     # every UI string
       fixtures/                 # labelled fixture responses for building before the API is live
-    android/                    # Capacitor's Android project (committed; build outputs ignored)
+    android/                    # Capacitor's Android project (C; committed, build outputs ignored)
   data/
     cooling_points_jaipur.json  # hand-verified points (D)
   scripts/
-    seed_cooling_points.py      # load data/ into DynamoDB (C)
+    seed_cooling_points.py      # load data/ into DynamoDB (D)
   tests/
     test_risk.py                # (A)
     test_guard.py               # (A)
+    test_forecast.py            # (D)
+    test_cooling.py             # (D)
     test_api.py                 # (C)
 ```
 
@@ -403,10 +421,10 @@ repo-root/
 - **Backend code root is `src/`.** Both Lambdas are built from it, so imports are flat: `import risk`, `import voice`. Not `from src import risk`.
 - **Handlers** are `handlers.api.handler` and `handlers.planner.handler`, each `def handler(event: dict, context: object) -> dict`. `planner.py` exists as a placeholder so the stack deploys; A replaces the body.
 - **Tests** run from the repo root with `pytest`; they also use flat imports.
-- **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text must sit under the key `red_flag` in both files; `api` returns an error for a dangerous plan if it is missing.
+- **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text is separate, in `src/copy/red_flag.json` as `{"hi": "...", "en": "..."}`; `api` returns an error for a dangerous plan if it is missing.
 - **`planner` is never retried** on failure, so a crash cannot build or voice the same plan twice. Set the status to `failed` and log.
-- **The APK is a build output.** It is never committed; B hands it to C for upload.
-- **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`.
+- **The APK is a build output.** It is never committed; C builds it from `main` and uploads it.
+- **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`; only C runs the Android build.
 - **`web/src/api.ts` is the API contract in TypeScript**: the types and one function per route. If the contract changes, change this brief first, then that file.
 - **App ID and name.** The Android app ID is `com.opuscube.app` and must not change once people have installed the app. The display name `OpusCube` is a placeholder, set in `web/capacitor.config.json` and `web/android/app/src/main/res/values/strings.xml`.
 - **Capacitor's config is JSON on purpose.** Its CLI cannot load a `.ts` config with TypeScript 7 on Node 22.
@@ -418,12 +436,12 @@ repo-root/
 2. Everyone with a session: pull the repo. This brief loads automatically as `CLAUDE.md`.
 3. C: set up the `opuscube` AWS profile and a Budgets alert at $10.
 4. C: get Bedrock access for Claude Haiku in `us-east-1`, and create a Bedrock-only IAM user for A.
-5. A and C: install Python 3.11+, then `pip install -r requirements.txt`. C also needs AWS CLI v2, SAM CLI and Docker.
-6. B: install Node.js (current LTS) and Android Studio, then `npm install` inside `web/`.
+5. A, C and D: install Python 3.11+, then `pip install -r requirements.txt`. C also needs AWS CLI v2, SAM CLI and Docker.
+6. B: install Node.js (current LTS), then `npm install` inside `web/`. Only C needs Android Studio.
 7. C: `sam build && sam deploy`, then post the CloudFront link in the team chat.
 8. C: build the web app, sync it to the web bucket and invalidate CloudFront.
-9. B: build the APK against the live API and hand it to C, who uploads it to the download path.
-10. C: run `scripts/seed_cooling_points.py` once D's file lands.
+9. C: build the APK against the live API and upload it to the download path.
+10. D: fill `data/cooling_points_jaipur.json`; C runs `scripts/seed_cooling_points.py` against the deployed table.
 
 ### Environment variables
 
@@ -437,14 +455,14 @@ If you are a Claude Code session reading this file, these rules override your de
 
 ### Scope
 
-1. Ask the human which role (A, B or C) you are working for. Edit only files that role owns in the repo tree above. If a change is needed elsewhere, write it up for the owner instead of making it.
+1. Ask the human which role (A, B, C or D) you are working for. Edit only files that role owns in the repo tree above. If a change is needed elsewhere, write it up for the owner instead of making it.
 2. Build only what is in this brief. If something seems missing, ask before adding a feature, a file, an AWS service or a dependency.
 3. Prefer the smallest working version. One flow that runs end to end beats several that almost do.
 
 ### Safety-critical rules
 
 4. Never let model output decide a band, temperature, time or threshold. Those come only from `risk.py`.
-5. Never generate or reword the red-flag message. It lives in `src/copy/*.json`, is written by a human, and changes only after human review.
+5. Never generate or reword the red-flag message, and never edit `src/copy/red_flag.json`. A human writes it, and it changes only after human review.
 6. Never invent forecast data, cooling points or user quotes, including in tests, fixtures, the README or demo scripts. Use real API responses or clearly labelled fixtures.
 7. The app displays; it does not decide. No band, temperature, time or safety text is computed, rounded differently or reworded in the frontend. It shows what the API returned.
 
@@ -455,7 +473,7 @@ If you are a Claude Code session reading this file, these rules override your de
 10. All config comes from the environment variables listed in this brief. Never hard-code ARNs, account IDs, model IDs or API URLs. Nothing secret goes into the app bundle, and the signing keystore never goes in the repo.
 11. All times are timezone-aware in `Asia/Kolkata`. Store dates as `YYYY-MM-DD` and hours as `HH:MM`.
 12. No user-facing text inside `.py` or `.tsx` files. Backend fixed text goes in `src/copy/*.json`; UI text goes in `web/src/copy/*.json`, keyed by name, in both languages.
-13. Write pytest tests for any logic in `risk.py`, `guard.py` and `api.py` routing and validation. Run `pytest` before saying a backend task is done; run `npm run build` before saying an app task is done.
+13. Write pytest tests for any logic in `risk.py`, `guard.py`, `forecast.py`, `cooling.py` and `api.py` routing and validation. Run `pytest` before saying a backend task is done; run `npm run build` before saying an app task is done.
 14. `api` always answers in JSON with an error code, never a stack trace, and logs errors to CloudWatch with the `site_id`. `planner` sets the plan status to `failed` on any error.
 
 ### Working together
@@ -471,7 +489,7 @@ The project is submittable when every box is ticked.
 - [ ] A new user on an Android phone outside the team downloads the app from our link, installs it, completes setup and gets a plan, in Hindi and in English
 - [ ] The same flow works from the web link in a phone browser
 - [ ] Replay mode produces a plan for the chosen May 2025 Jaipur date, with a stop-work window
-- [ ] The red-flag message appears on every Danger-or-worse plan, word for word from `src/copy/*.json`
+- [ ] The red-flag message appears on every Danger-or-worse plan, word for word from `src/copy/red_flag.json`
 - [ ] "Make crew voice note" returns a Hindi voice note that plays in the app and shares to WhatsApp
 - [ ] The output guard falls back to the template plan when it detects an invented number (tested)
 - [ ] `pytest` passes and `npm run build` passes; deployed with `sam deploy`, no manual console changes

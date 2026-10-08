@@ -55,9 +55,9 @@ def _audio_url(key: str) -> str:
     )
 
 
-def _copy(language: str) -> dict:
-    path = Path(__file__).parent.parent / "copy" / f"{language}.json"
-    return json.loads(path.read_text(encoding="utf-8"))
+def _red_flag(language: str) -> str:
+    path = Path(__file__).parent.parent / "copy" / "red_flag.json"
+    return json.loads(path.read_text(encoding="utf-8"))[language]
 
 
 def _now() -> datetime:
@@ -190,11 +190,11 @@ def get_plan(body: dict, site_id: str, day: str) -> dict:
         return _json(200, out)
     out.update({field: plan.get(field) for field in PLAN_FIELDS})
     out["cooling_points"] = plan.get("cooling_points", [])
-    # The red-flag text is fixed and human-reviewed. It is attached here, from the copy
-    # file, so it never passes through the model. A missing text is an error, not a blank.
+    # The red-flag text is fixed and human-reviewed. It is attached here, from its own
+    # human-written file, so it never passes through the model. A missing text is an error, not a blank.
     out["red_flag"] = None
     if plan.get("max_band") in RED_FLAG_BANDS:
-        out["red_flag"] = _copy(_site(site_id)["language"])["red_flag"]
+        out["red_flag"] = _red_flag(_site(site_id)["language"])
     out["audio_status"] = plan.get("audio_status", "none")
     ready = out["audio_status"] == "ready" and plan.get("audio_s3_key")
     out["audio_url"] = _audio_url(plan["audio_s3_key"]) if ready else None

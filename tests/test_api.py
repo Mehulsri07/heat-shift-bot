@@ -42,7 +42,7 @@ def world(monkeypatch: pytest.MonkeyPatch) -> dict:
     monkeypatch.setattr(api, "_table", lambda env_name: tables[env_name])
     monkeypatch.setattr(api, "_invoke_planner", invoked.append)
     monkeypatch.setattr(api, "_audio_url", lambda key: f"https://fixture.invalid/{key}")
-    monkeypatch.setattr(api, "_copy", lambda language: {"red_flag": FIXTURE_RED_FLAG})
+    monkeypatch.setattr(api, "_red_flag", lambda language: FIXTURE_RED_FLAG)
     return {"sites": tables["SITES_TABLE"], "plans": tables["PLANS_TABLE"], "invoked": invoked}
 
 
@@ -171,7 +171,11 @@ def test_danger_plan_carries_the_fixed_red_flag_text(world: dict, band: str) -> 
 def test_danger_plan_without_red_flag_text_is_an_error(world: dict, monkeypatch: pytest.MonkeyPatch) -> None:
     add_site(world)
     add_plan(world, today(), status="ready", max_band="DANGER")
-    monkeypatch.setattr(api, "_copy", lambda language: {})
+
+    def missing(language: str) -> str:
+        raise KeyError(language)
+
+    monkeypatch.setattr(api, "_red_flag", missing)
     assert call("GET", f"/api/sites/{SITE_ID}/plans/{today()}") == (500, {"error": "server_error"})
 
 
