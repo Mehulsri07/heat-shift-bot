@@ -2,7 +2,7 @@
 
 A Telegram bot that tells a construction-site supervisor which hours tomorrow are safe for outdoor work in extreme heat, and gives the crew the same plan as a Hindi voice note.
 
-Entry for the WeMakeDevs x AWS environmental hackathon, Heat and Water track.
+Team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon, Heat and Water track.
 
 ## The problem
 
