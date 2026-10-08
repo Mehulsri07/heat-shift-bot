@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Heat-safe shift planner Telegram bot (webhook + planner)
+
+Parameters:
+  BedrockModelId:
+    Type: String
+    Description: Bedrock model ID or inference profile ID for Claude Haiku
+  TelegramTokenParam:
+    Type: String
+    Default: /hackathon/telegram_token
+  WebhookSecretParam:
+    Type: String
+    Default: /hackathon/webhook_secret
+
+Globals:
+  Function:
+    Runtime: python3.11
+    CodeUri: src/
+    MemorySize: 512
+    Environment:
+      Variables:
+        SITES_TABLE: !Ref SitesTable
+        PLANS_TABLE: !Ref PlansTable
+        COOLING_TABLE: !Ref CoolingPointsTable
+        AUDIO_BUCKET: !Ref AudioBucket
+        BEDROCK_MODEL_ID: !Ref BedrockModelId
+        TELEGRAM_TOKEN_PARAM: !Ref TelegramTokenParam
+        WEBHOOK_SECRET_PARAM: !Ref WebhookSecretParam
+        POLLY_VOICE_ID: Kajal
+        TZ_NAME: Asia/Kolkata
+
+Resources:
+  WebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers.webhook.handler
+      Timeout: 10
+      Environment:
+        Variables:
+          PLANNER_FUNCTION_NAME: !Ref PlannerFunction
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SitesTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref PlansTable
+        - LambdaInvokePolicy:
+            FunctionName: !Ref PlannerFunction
+        - Statement:
+            - Effect: Allow
+              Action: ssm:GetParameter
+              Resource:
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${TelegramTokenParam}
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${WebhookSecretParam}
+      Events:
+        Telegram:
+          Type: HttpApi
+          Properties:
+            Path: /telegram
+            Method: POST
+
+  PlannerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers.planner.handler
+      Timeout: 120
+      MemorySize: 1024
+      # No async retries: a failed run must not send the same plan twice.
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref SitesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlansTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref CoolingPointsTable
+        - S3CrudPolicy:
+            BucketName: !Ref AudioBucket
+        - Statement:
+            - Effect: Allow
+              Action: ssm:GetParameter
+              Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${TelegramTokenParam}
+            - Effect: Allow
+              Action: polly:SynthesizeSpeech
+              Resource: '*'
+            # Inference profiles fan out to model ARNs in several regions, hence '*'.
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+                - bedrock:InvokeModelWithResponseStream
+              Resource: '*'
+      Events:
+        Daily:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: cron(0 6 * * ? *)
+            ScheduleExpressionTimezone: Asia/Kolkata
+            Input: '{"all_sites": true}'
+
+  SitesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: site_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: site_id
+          KeyType: HASH
+
+  PlansTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: site_id
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: site_id
+          KeyType: HASH
+        - AttributeName: date
+          KeyType: RANGE
+
+  CoolingPointsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: city
+          AttributeType: S
+        - AttributeName: point_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: city
+          KeyType: HASH
+        - AttributeName: point_id
+          KeyType: RANGE
+
+  AudioBucket:
+    Type: AWS::S3::Bucket
+
+Outputs:
+  WebhookUrl:
+    Description: Pass this to scripts/set_webhook.py
+    Value: !Sub https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/telegram
+  CoolingTable:
+    Description: Set as COOLING_TABLE for scripts/seed_cooling_points.py
+    Value: !Ref CoolingPointsTable

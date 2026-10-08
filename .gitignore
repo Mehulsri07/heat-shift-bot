@@ -1,0 +1,6 @@
+.aws-sam/
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+*.mp3

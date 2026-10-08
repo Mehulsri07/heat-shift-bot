@@ -1,0 +1,16 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "heat-shift-bot"
+region = "us-east-1"
+
+[default.build.parameters]
+# Build inside the Lambda Python 3.11 image so wheels match the runtime (needs Docker running).
+use_container = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+resolve_s3 = true
+confirm_changeset = false
+# BedrockModelId has no default: pass --parameter-overrides BedrockModelId=<id> on the first
+# deploy, or run `sam deploy --guided` once and let it save the value here.
