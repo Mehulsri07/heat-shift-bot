@@ -11,19 +11,19 @@ It is team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon (He
 - **App name.** Needed for the icon label. The scaffold uses the placeholder `OpusCube` until the team decides.
 - **Stop window against the `DANGER` action text.** The stop window counts `DANGER` hours, but the `DANGER` action says "light tasks only". Recommended fix: change the `DANGER` action to "Stop outdoor work; light tasks in shade only". Needs a human decision before A writes the plan template.
 - **Exact deadline.** Confirm the cut-off time and time zone on the hackathon page.
-- **Names.** Who takes roles A, B and D.
+- **Names.** Who takes roles A and B, and who owns the video (see Unassigned work).
 - **Replay date.** D picks the May 2025 Jaipur heat day for the demo.
 
 ## Workload division
 
-Four people, four lanes, no shared files, and nobody waits on anybody. Every lane builds against a contract written in this brief and uses labelled fixtures until the real thing lands. A, B and C each drive a Claude Code session. D writes code too, and also owns the real-world facts and the video.
+Four people, four lanes, no shared files, and nobody waits on anybody. Every lane builds against a contract written in this brief and uses labelled fixtures until the real thing lands. A, B and C each drive a Claude Code session. D owns the datasets and the lighter coding. The video, the interviews and the Hindi review have no owner yet (see Unassigned work).
 
 | Role | Person | One-line job | Files owned |
 |---|---|---|---|
 | A: Risk and agent | to be named | Turn hourly weather into a safe, checked plan | `src/risk.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/hi.json`, `src/copy/en.json`, `tests/test_risk.py`, `tests/test_guard.py` |
 | B: App screens | to be named | Build every screen of the React app | Everything under `web/` except `web/android/` and `web/capacitor.config.json` |
 | C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `CLAUDE.md`, requirements files, `pytest.ini` |
-| D: Data, content and video | Nemat | Supply the weather and cooling data, the safety wording and the video | `src/forecast.py`, `src/cooling.py`, `tests/test_forecast.py`, `tests/test_cooling.py`, `data/cooling_points_jaipur.json`, `scripts/seed_cooling_points.py`, `src/copy/red_flag.json`, the video |
+| D: Data | Nemat | Supply the weather and cooling data, and the small modules that read it | `src/forecast.py`, `src/cooling.py`, `tests/test_forecast.py`, `tests/test_cooling.py`, `data/cooling_points_jaipur.json`, `scripts/seed_cooling_points.py`, `src/copy/red_flag.json` |
 
 ### A: Risk and agent
 
@@ -31,7 +31,7 @@ Four people, four lanes, no shared files, and nobody waits on anybody. Every lan
 - `agent.py`: the Strands agent, its system prompt and three tools. The forecast and cooling tools are thin wrappers around D's functions.
 - `guard.py`: the number check and the template fallback plan, with tests.
 - `planner.py`: plan mode, voice mode (calls C's `make_voice_note`) and the daily run; saves the `Plans` row with a status.
-- `src/copy/hi.json` and `en.json`: the band action lines and the template sentences. D arranges the native-speaker review.
+- `src/copy/hi.json` and `en.json`: the band action lines and the template sentences. The native-speaker review of the Hindi is unassigned.
 - Starts on labelled fixture hours, so nothing waits for D's forecast client.
 
 ### B: App screens
@@ -52,22 +52,25 @@ Four people, four lanes, no shared files, and nobody waits on anybody. Every lan
 - README, architecture slide, and keeping this brief current.
 - Chases Builder Center verification for all four members, and tests the app from a phone outside the team.
 
-### D: Data, content and video
+### D: Data
 
-Code:
+Datasets and lightweight coding only.
 
 - `forecast.py`: the Open-Meteo client, forecast and past dates, with a test. Do this first: the replay date and A's integration both need it.
+- The replay date: pick the May 2025 Jaipur heat day, using the forecast client to look at the real numbers.
+- `data/cooling_points_jaipur.json`: 10 hand-verified cooling points in Jaipur.
 - `cooling.py`: nearest cooling points from DynamoDB by straight-line distance, with a test.
-- `scripts/seed_cooling_points.py` (already written; D owns it now) and the data file it loads.
-- `src/copy/red_flag.json`: the red-flag message in Hindi and English, written by a human and reviewed by a native speaker. No Claude session may write or reword it.
+- `scripts/seed_cooling_points.py` (already written; D owns it now), which loads that file.
+- `src/copy/red_flag.json`: the red-flag message in Hindi and English, typed in by hand and checked by a native speaker. No Claude session may write or reword it.
+- Data check: compare the numbers the app shows for the replay date against the raw Open-Meteo response.
 
-Product and video:
+### Unassigned work (needs an owner)
 
-- Talk to 3 to 5 real supervisors or workers, and bring back what they said, word for word.
-- Collect 10 hand-verified cooling points in Jaipur.
-- Pick the May 2025 replay date, using the forecast client to look at the real numbers.
-- Arrange the native-speaker review of the Hindi text from A and B.
-- Script the video, film, record the voiceover, edit and submit. A, B and C supply the screen recordings.
+Nobody owns these yet. The video is a hard requirement of the submission, so it needs a name first.
+
+- **The demo video** (required): script, real-world footage, voiceover, edit, upload and the submission itself. A, B and C supply the screen recordings.
+- **Native-speaker review of the Hindi text** from A (`src/copy/hi.json`) and B (`web/src/copy/hi.json`).
+- **Interviews** with 3 to 5 real supervisors or workers (optional). Without them, the video and README must not quote or paraphrase any user.
 
 ### Contracts between lanes
 
@@ -91,15 +94,15 @@ Feature freeze is **Saturday 10 October, 12:00 IST**. After that we only fix bug
 
 Work runs in three phases. Until Friday 10:00 everyone builds alone against contracts and fixtures. From Friday 10:00 the lanes join up in one fixed order: D's forecast into A's planner, A's planner into C's deploy, C's live link into B's app. Saturday is fixes, recording and the video.
 
-| When | A | B | C | D |
-|---|---|---|---|---|
-| Thu 8 Oct, night | `risk.py` and its tests passing | Setup and plan screens on fixtures | AWS profile, Bedrock access, first deploy; debug APK built from the scaffold | `forecast.py` and its test, against real Open-Meteo responses; Builder Center profile |
-| Fri 9 Oct, to 10:00 | Agent returns a plan from fixture hours; `guard.py` and its tests | Screens call `api.ts` with polling; colour strip | Live link posted; Bedrock-only access handed to A | Replay date chosen; `red_flag.json` written and reviewed; first interviews |
-| Fri 9 Oct, 10:00 to evening | `planner` on the real forecast, saving to `Plans`; replay mode | Switch from fixtures to the live API; voice player and share | Redeploy with A's planner; APK from B's code on a real phone | `cooling.py` and its test; 10 cooling points seeded; film real-world footage |
-| Fri 9 Oct, night | Voice mode; cooling tool wired in | Hindi and English toggle; error states | APK download hosted; 06:00 schedule; clean logs | Video script v1; remaining interviews |
-| Sat 10 Oct, to 12:00 | Bug fixes only | Fixes from the Hindi review | README and architecture slide; final APK | Hindi review signed off; final storyboard |
-| Sat 10 Oct, afternoon | Screen-record the plan flows | Screen-record the app | Freeze; install and test from a fresh phone | Voiceover and edit |
-| Sun 11 Oct | Standby | Standby | Repo public, links checked | Final cut, upload, submit early |
+| When | A | B | C | D | Video (owner needed) |
+|---|---|---|---|---|---|
+| Thu 8 Oct, night | `risk.py` and its tests passing | Setup and plan screens on fixtures | AWS profile, Bedrock access, first deploy; debug APK built from the scaffold | `forecast.py` and its test, against real Open-Meteo responses | Owner named |
+| Fri 9 Oct, to 10:00 | Agent returns a plan from fixture hours; `guard.py` and its tests | Screens call `api.ts` with polling; colour strip | Live link posted; Bedrock-only access handed to A | Replay date chosen; `red_flag.json` typed in and checked | Script v1 |
+| Fri 9 Oct, 10:00 to evening | `planner` on the real forecast, saving to `Plans`; replay mode | Switch from fixtures to the live API; voice player and share | Redeploy with A's planner; APK from B's code on a real phone | 10 cooling points in the data file; `cooling.py` and its test | Real-world footage |
+| Fri 9 Oct, night | Voice mode; cooling tool wired in | Hindi and English toggle; error states | APK download hosted; cooling points seeded; 06:00 schedule; clean logs | Data check of the replay numbers | Storyboard |
+| Sat 10 Oct, to 12:00 | Bug fixes only | Fixes from the Hindi review | README and architecture slide; final APK | Bug fixes in own modules | Hindi review done |
+| Sat 10 Oct, afternoon | Screen-record the plan flows | Screen-record the app | Freeze; install and test from a fresh phone | Standby | Voiceover and edit |
+| Sun 11 Oct | Standby | Standby | Repo public, links checked | Standby | Final cut, upload, submit early |
 
 **Friday-evening milestone:** on a real phone, location in and plan out, against the deployed backend.
 

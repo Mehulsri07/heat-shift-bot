@@ -106,7 +106,7 @@ The working plan until submission. `CLAUDE.md` holds the full brief, the API con
 | A: Risk and agent | to be named | Risk engine, Strands agent, output guard, `planner`, backend text |
 | B: App screens | to be named | Every screen of the React app |
 | C: Infra, API and release | Mehul | AWS, the API, the voice module, the Android build, every deploy |
-| D: Data, content and video | Nemat | `forecast.py`, `cooling.py`, cooling data, the red-flag wording, the video |
+| D: Data | Nemat | `forecast.py`, `cooling.py`, the cooling and replay data, the red-flag file |
 
 Nobody shares a file. Each pair of lanes meets at one contract (a function signature, the API, or a file format), listed under "Contracts between lanes" in `CLAUDE.md`, and codes against it with labelled fixtures until the real thing lands.
 
@@ -153,24 +153,32 @@ Nobody shares a file. Each pair of lanes meets at one contract (a function signa
 - [ ] Bedrock-only access handed to A (Fri 10:00)
 - [ ] Redeployed with A's planner (Fri evening)
 - [ ] APK built from B's code and run on a real phone: location prompt and share sheet checked (Fri evening)
-- [ ] APK download hosted; 06:00 schedule checked; logs clean (Fri night)
+- [ ] APK download hosted; cooling points seeded; 06:00 schedule checked; logs clean (Fri night)
 - [ ] README finalised and architecture slide made (Sat 12:00)
 - [ ] App installed and tested from a phone outside the team (Sat afternoon)
 - [ ] All four members verified on Builder Center
 - [ ] Repo public, links checked (Sun)
 
-### D: Data, content and video
+### D: Data
 
 - [ ] `forecast.py` and its test, against real Open-Meteo responses (Thu night)
 - [ ] Replay date chosen: a real May 2025 Jaipur heat day (Fri 10:00)
-- [ ] `src/copy/red_flag.json` written by hand and reviewed by a native speaker (Fri 10:00)
-- [ ] `cooling.py` and its test (Fri evening)
+- [ ] `src/copy/red_flag.json` typed in by hand and checked by a native speaker (Fri 10:00)
 - [ ] 10 hand-verified cooling points in `data/cooling_points_jaipur.json` (Fri evening)
-- [ ] 3 to 5 interviews with supervisors or workers
-- [ ] Real-world footage filmed; video script v1 (Fri night)
+- [ ] `cooling.py` and its test (Fri evening)
+- [ ] Data check: the app's replay numbers match the raw Open-Meteo response (Fri night)
+
+### Unassigned (needs an owner)
+
+The video is a hard requirement of the submission.
+
+- [ ] Video owner named (Thu night)
+- [ ] Video script v1 (Fri 10:00)
+- [ ] Real-world footage filmed (Fri evening)
 - [ ] Hindi text from A and B reviewed by a native speaker (Sat 12:00)
 - [ ] Voiceover and edit (Sat afternoon)
-- [ ] Final cut uploaded and submitted (Sun)
+- [ ] Final cut uploaded and submitted, at least 3 hours before the deadline (Sun)
+- [ ] Optional: 3 to 5 interviews with supervisors or workers. Without them, quote no users
 
 ### If things slip
 
@@ -179,7 +187,7 @@ Nobody shares a file. Each pair of lanes meets at one contract (a function signa
 
 ### Open decisions
 
-- [ ] Who takes roles A and B
+- [ ] Who takes roles A and B, and who owns the video
 - [ ] App name (the scaffold uses the placeholder `OpusCube`)
 - [ ] `DANGER` action wording: the stop window counts `DANGER` hours, but the action says "light tasks only"
 - [ ] Exact submission cut-off time and time zone, from the hackathon page
