@@ -1,0 +1,92 @@
+[
+  {
+    "city": "jaipur",
+    "point_id": "sms-hospital",
+    "name": "Sawai Man Singh Hospital",
+    "lat": 26.9056,
+    "lon": 75.8155,
+    "type": "clinic",
+    "verified_by": "Wikipedia coordinates and Rajasthan government hospital listing (rajasthan.gov.in)"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "jk-lone-hospital",
+    "name": "JK Lone Hospital",
+    "lat": 26.9014,
+    "lon": 75.8177,
+    "type": "clinic",
+    "verified_by": "Rajasthan government hospital listing (rajasthan.gov.in) and Mapcarta coordinates"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "mahila-chikitsalaya",
+    "name": "Mahila Chikitsalaya (Women's Hospital)",
+    "lat": 26.9144,
+    "lon": 75.8241,
+    "type": "clinic",
+    "verified_by": "Rajasthan government hospital listing (prognohealth.com, rajasthan.gov.in)"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "central-park",
+    "name": "Central Park Jaipur",
+    "lat": 26.9040,
+    "lon": 75.8089,
+    "type": "shade",
+    "verified_by": "Wikipedia article with coordinates (26°54′14″N 75°48′32″E); managed by Jaipur Development Authority"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "ram-niwas-garden",
+    "name": "Ram Niwas Garden",
+    "lat": 26.9153,
+    "lon": 75.8186,
+    "type": "shade",
+    "verified_by": "Wikipedia article with coordinates (26°54′55″N 75°49′07″E); historic 30-acre public garden"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "jawahar-circle",
+    "name": "Jawahar Circle Garden",
+    "lat": 26.8404,
+    "lon": 75.8003,
+    "type": "shade",
+    "verified_by": "Wikipedia article with coordinates (26°50′25″N 75°48′01″E); one of Asia's largest circular parks"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "kanak-vrindavan",
+    "name": "Kanak Vrindavan Garden",
+    "lat": 26.9630,
+    "lon": 75.8520,
+    "type": "shade",
+    "verified_by": "Multiple tourism and government sources (mapsofindia.com, universaladventures.in); shaded Mughal garden at base of Nahargarh hills"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "jaipur-railway-station-water",
+    "name": "Jaipur Junction Railway Station (water facility)",
+    "lat": 26.9208,
+    "lon": 75.7866,
+    "type": "water",
+    "verified_by": "Wikipedia coordinates (26°55′15″N 75°47′12″E); Indian Railways water vending machines on platforms"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "sindhi-camp-bus-stand-water",
+    "name": "Sindhi Camp Bus Stand (water facility)",
+    "lat": 26.9225,
+    "lon": 75.7907,
+    "type": "water",
+    "verified_by": "Major RSRTC inter-state bus terminal with public drinking water; coordinates from mapping services and RSRTC official listing"
+  },
+  {
+    "city": "jaipur",
+    "point_id": "kanwatia-hospital",
+    "name": "Kanwatia Hospital",
+    "lat": 26.9312,
+    "lon": 75.7972,
+    "type": "clinic",
+    "verified_by": "Government hospital listed by Rajasthan health department (prognohealth.com, jaipuronline.in); located in Shastri Nagar area"
+  }
+]
