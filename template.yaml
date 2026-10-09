@@ -71,7 +71,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: handlers.planner.handler
-      Timeout: 120
+      # The 06:00 job builds every site one after another; one site takes well under a minute.
+      Timeout: 300
       MemorySize: 1024
       # No async retries: a failed run must not build or voice the same plan twice.
       EventInvokeConfig:

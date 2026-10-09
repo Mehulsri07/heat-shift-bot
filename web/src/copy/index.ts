@@ -13,3 +13,6 @@ export const fill = (template: string, values: Record<string, string | number>) 
 /** The sentence for an API error code, falling back to the generic one. */
 export const errorText = (t: Strings, code: string) =>
   (t as Record<string, string>)[`error_${code}`] ?? t.error_server_error;
+
+/** The printed name of a band, so no band is ever shown by colour alone. Unknown bands show as they came. */
+export const bandText = (t: Strings, band: string) => (t as Record<string, string>)[`band_${band}`] ?? band;

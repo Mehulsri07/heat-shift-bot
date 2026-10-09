@@ -22,7 +22,7 @@ SITE = r"(?P<site_id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 DATE = r"(?P<day>\d{4}-\d{2}-\d{2})"
 RED_FLAG_BANDS = {"DANGER", "EXTREME_DANGER"}
 MAX_DAYS_AHEAD = 3
-# planner times out at 120 s; a row still pending after this is treated as dead and rebuilt.
+# A single plan takes well under a minute; a row still pending after this is treated as dead and rebuilt.
 STALE_AFTER = timedelta(seconds=150)
 AUDIO_LINK_SECONDS = 3600
 PLAN_FIELDS = ("source", "hours", "stop_window", "max_band", "plan_text")

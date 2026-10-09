@@ -31,7 +31,7 @@ export function Segmented<T extends string>({ name, legend, quiet, variant, valu
               onChange={() => onChange(option.value)}
               required
             />
-            <span>{option.label}</span>
+            <span className="segment-label">{option.label}</span>
           </label>
         ))}
       </div>

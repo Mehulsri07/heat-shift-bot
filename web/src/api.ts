@@ -36,13 +36,18 @@ export interface CoolingPoint {
   distance_km: number;
 }
 
+export interface StopWindow {
+  start: string; // HH:MM
+  end: string; // HH:MM, the end of the last stopped hour
+}
+
 export interface ReadyPlan {
   status: 'ready';
   site_id: string;
   date: string; // YYYY-MM-DD
   source: 'forecast' | 'replay';
   hours: Hour[];
-  stop_window: { start: string; end: string } | null;
+  stop_window: StopWindow | null;
   max_band: Band;
   plan_text: string;
   red_flag: string | null; // fixed text: show it word for word
