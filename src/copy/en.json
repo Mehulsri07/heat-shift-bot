@@ -1,0 +1,19 @@
+{
+  "band_SAFE": "Safe",
+  "band_CAUTION": "Caution",
+  "band_EXTREME_CAUTION": "Extreme caution",
+  "band_DANGER": "Danger",
+  "band_EXTREME_DANGER": "Extreme danger",
+
+  "action_SAFE": "Work as normal and drink water regularly.",
+  "action_CAUTION": "Work as normal and drink water every 15 to 20 minutes.",
+  "action_EXTREME_CAUTION": "Take a shade break every hour and move heavy work to the morning.",
+  "action_DANGER": "Light tasks only, long shade breaks and buddy checks.",
+  "action_EXTREME_DANGER": "Stop outdoor work.",
+
+  "stop_yes": "Stop outdoor work from {start} to {end}.",
+  "stop_no": "No stop-work window today.",
+  "peak_line": "Highest heat index: {hi}°C at {hour}.",
+  "max_line": "Highest risk level today: {band}.",
+  "voice_intro": "Here is today's heat plan."
+}
