@@ -1,0 +1,152 @@
+# Checks every pull request, and every push to main, before code is trusted.
+# No job needs a secret, so pull requests from forks get the same checks.
+# Every action is pinned to an exact commit; the comment beside it names the release.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or pull request cancels the run it replaces.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (lint, security rules, tests, dependency audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Lint and security rules (ruff, see ruff.toml)
+        run: ruff check .
+      - name: Tests
+        run: pytest
+      - name: Known vulnerabilities in what ships to Lambda
+        run: pip-audit -r src/requirements.txt --progress-spinner off
+
+  app:
+    name: App (lint, types, build, dependency audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exactly what the lockfile says
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type-check and build
+        run: npm run build
+      - name: No fixture data in the production bundle
+        run: |
+          if grep -r -l "FIXTURE" dist; then
+            echo "::error::The production bundle contains fixture data. Fixtures must load only when VITE_FIXTURES=1."
+            exit 1
+          fi
+      - name: Known high or critical vulnerabilities in what ships in the app
+        run: npm audit --omit=dev --audit-level=high
+
+  infra:
+    name: Infra (template lint, Lambda package build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+      - name: Install SAM CLI
+        run: pip install aws-sam-cli==1.167.0
+      - name: Validate and lint the template
+        run: sam validate --lint --region us-east-1
+        env:
+          SAM_CLI_TELEMETRY: '0'
+      - name: Build the Lambda package the way a deploy does
+        run: sam build
+        env:
+          SAM_CLI_TELEMETRY: '0'
+      - name: The package must fit in a Lambda zip (250 MB unzipped)
+        run: |
+          size=$(du -sm .aws-sam/build/ApiFunction | cut -f1)
+          echo "Package is ${size} MB unzipped"
+          if [ "$size" -gt 240 ]; then
+            echo "::error::Lambda package is ${size} MB; the limit is 250 MB unzipped."
+            exit 1
+          fi
+
+  secrets:
+    name: Secrets and files that must never be committed
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the scanner reads every commit, not only the latest
+      - name: Scan the history for secrets
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+      - name: No app packages, signing keys or env files in the repo
+        run: |
+          bad=$(git ls-files | grep -E '\.(apk|aab|jks|keystore|pem|p12)$|(^|/)\.env($|\.)' | grep -v '\.env\.example$' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::These files must not be committed:"
+            echo "$bad"
+            exit 1
+          fi
+
+  codeql:
+    name: Code scanning (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, javascript-typescript]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          category: /language:${{ matrix.language }}
+
+  # One name to require in branch protection: green only when every job above is.
+  all-checks:
+    name: All checks
+    if: always()
+    needs: [backend, app, infra, secrets, codeql]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail unless every job passed
+        run: |
+          echo '${{ toJSON(needs) }}'
+          if [ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "true" ]; then
+            exit 1
+          fi

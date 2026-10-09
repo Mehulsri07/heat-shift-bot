@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { copy, type Language } from './copy';
-import { FIXTURE_BANNER } from './fixtures';
+import { FIXTURE_BANNER } from './fixtures/banner';
 import { Plan } from './screens/Plan';
 import { Setup } from './screens/Setup';
 

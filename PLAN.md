@@ -443,6 +443,8 @@ repo-root/
   samconfig.toml                # deploy settings (C)
   requirements.txt              # dev install: runtime pins plus pytest (C)
   pytest.ini                    # puts src/ on the import path (C)
+  ruff.toml                     # Python lint and security rules (C)
+  .github/workflows/ci.yml      # the checks every pull request must pass (C)
   src/
     requirements.txt            # runtime pins, packaged by SAM (C)
     risk.py                     # heat index + bands, no I/O (A)
@@ -481,6 +483,7 @@ repo-root/
     test_forecast.py            # (D)
     test_cooling.py             # (D)
     test_api.py                 # (C)
+    test_copy.py                # Hindi and English copy stay in step (C)
 ```
 
 ### Repo conventions
@@ -490,6 +493,7 @@ repo-root/
 - **Tests** run from the repo root with `pytest`; they also use flat imports.
 - **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text is separate, in `src/copy/red_flag.json` as `{"hi": "...", "en": "..."}`; `api` returns an error for a dangerous plan if it is missing.
 - **`planner` is never retried** on failure, so a crash cannot build or voice the same plan twice. Set the status to `failed` and log.
+- **CI checks every pull request** (`.github/workflows/ci.yml`): Python lint with security rules, tests, dependency audits, the app's lint, type-check and build, the SAM template and Lambda package, a secret scan and code scanning. Run the same commands locally first (rule 13). A lint finding is fixed in the code, not silenced; an ignore needs a one-line reason beside it.
 - **The one shared edit.** The Checklists section of this file is for tracking: every lane ticks its own boxes there. Pull first, tick only your own, and change nothing else in `PLAN.md`.
 - **The APK is a build output.** It is never committed; C builds it from `main` and uploads it.
 - **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`; only C runs the Android build.
@@ -542,7 +546,7 @@ If you are a Claude Code session reading this file, these rules override your de
 10. All config comes from the environment variables listed in this brief. Never hard-code ARNs, account IDs, model IDs or API URLs. Nothing secret goes into the app bundle, and the signing keystore never goes in the repo.
 11. All times are timezone-aware in `Asia/Kolkata`. Store dates as `YYYY-MM-DD` and hours as `HH:MM`.
 12. No user-facing text inside `.py` or `.tsx` files. Backend fixed text goes in `src/copy/*.json`; UI text goes in `web/src/copy/*.json`, keyed by name, in both languages.
-13. Write pytest tests for any logic in `risk.py`, `guard.py`, `forecast.py`, `cooling.py` and `api.py` routing and validation. Run `pytest` before saying a backend task is done; run `npm run build` before saying an app task is done.
+13. Write pytest tests for any logic in `risk.py`, `guard.py`, `forecast.py`, `cooling.py` and `api.py` routing and validation. Before saying a backend task is done, run `ruff check .` and `pytest`; before saying an app task is done, run `npm run lint` and `npm run build` inside `web/`. CI runs the same commands on every pull request.
 14. `api` always answers in JSON with an error code, never a stack trace, and logs errors to CloudWatch with the `site_id`. `planner` sets the plan status to `failed` on any error.
 
 ### Working together

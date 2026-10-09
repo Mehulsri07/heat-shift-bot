@@ -1,0 +1,19 @@
+# Lint rules for the Python backend, run by CI on every pull request.
+target-version = "py311"
+extend-exclude = ["web", ".aws-sam"]
+
+[lint]
+select = [
+  "E", "F",  # syntax errors, undefined names, unused imports and variables
+  "B",       # likely bugs
+  "S",       # security checks (the bandit rule set)
+  "DTZ",     # datetimes without a time zone: PLAN.md requires Asia/Kolkata everywhere
+]
+ignore = ["E501"]  # line length is not worth a failed build
+
+[lint.per-file-ignores]
+"tests/*" = ["S101", "DTZ"]  # tests use assert and build fixed datetimes
+# Existing findings in role D's files, left for their owner to clean up; delete each line when fixed.
+"src/cooling.py" = ["F841"]
+"tests/test_cooling.py" = ["S101", "DTZ", "F401"]
+"tests/test_forecast.py" = ["S101", "DTZ", "F401"]

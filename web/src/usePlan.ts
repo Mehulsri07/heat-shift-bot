@@ -24,6 +24,7 @@ export function usePlan(siteId: string, date: string) {
   const [attempt, setAttempt] = useState(0);
   const [refreshes, setRefreshes] = useState(0);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: attempt and refreshes exist only to re-run this effect
   useEffect(() => {
     let cancelled = false;
     const startedAt = Date.now();

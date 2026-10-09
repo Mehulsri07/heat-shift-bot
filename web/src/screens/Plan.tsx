@@ -156,6 +156,7 @@ function DayPlan({ t, siteId, date, nowHour, blanks }: DayProps) {
         <div className="roller" aria-hidden="true" />
         <ol className="strip strip-blank" aria-hidden="true">
           {Array.from({ length: blanks }, (_, index) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: identical placeholders that never reorder
             <li key={index} className="chip">
               <span className="chip-rail" />
               <span className="chip-field" />
@@ -303,6 +304,7 @@ function VoiceNote({ t, siteId, plan, onRequested }: VoiceProps) {
       <h2 className="block-title">{t.voice_heading}</h2>
       {url ? (
         <>
+          {/* biome-ignore lint/a11y/useMediaCaption: the plan text on this screen is what the voice note says */}
           <audio className="player" controls preload="none" src={url} />
           <button
             type="button"
