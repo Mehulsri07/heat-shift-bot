@@ -1,0 +1,771 @@
+/* Shade card: flat enamel chips with printed names, on card stock, under an ultramarine shell.
+   Square corners and hard edges everywhere. Colour is never blended. */
+
+:root {
+  --ground: #f3f4f8; /* card stock, tinted toward the shell */
+  --panel: #ffffff; /* the white label panel under every chip */
+  --ink: #12141c;
+  --ink-2: #454b5e;
+  --rule: #c9cdd9;
+  --desk: #dde0ea; /* what shows beside the card on a wide screen */
+
+  --shell: #1b3a93; /* ultramarine: the one hue that is off the risk scale */
+  --on-shell: #ffffff;
+  --on-shell-2: #d3dbf6;
+
+  /* The five bands, in order. Only the API decides which hour gets which. */
+  --safe: #2e8b4e;
+  --caution: #f0c22b;
+  --extreme-caution: #ee7f1b;
+  --danger: #d0302c;
+  --extreme-danger: #5e0f1c;
+
+  --text-s: 0.875rem;
+  --text: 1.0625rem;
+  --text-l: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-title: 1.75rem;
+  --text-figure: 2rem;
+
+  --font: 'Anek Devanagari Variable', system-ui, 'Noto Sans Devanagari', sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--desk);
+  scrollbar-color: var(--shell) var(--desk);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--text);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+::selection {
+  background: var(--caution);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--shell);
+  outline-offset: 2px;
+}
+
+input {
+  caret-color: var(--shell);
+  accent-color: var(--shell);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  max-width: 30rem;
+  min-height: 100dvh;
+  margin-inline: auto;
+  background: var(--ground);
+}
+
+/* ---- Shell ---- */
+
+.shell {
+  padding-top: env(safe-area-inset-top);
+  background: var(--shell);
+  color: var(--on-shell);
+}
+
+.shell :focus-visible,
+.shell input:focus-visible + span {
+  outline-color: var(--on-shell);
+}
+
+.shell-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 16px;
+}
+
+.shell-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  font-stretch: 88%;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Segmented choice: joined blocks over real radio inputs ---- */
+
+.segmented {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.segmented-row {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 2px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+}
+
+.segment {
+  position: relative;
+  display: block;
+}
+
+.segment input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segment span {
+  display: grid;
+  place-items: center;
+  min-height: 52px;
+  padding: 6px 12px;
+  background: var(--panel);
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  transition: background-color 160ms var(--ease);
+}
+
+.segment input:hover + span {
+  background: #e7eaf5;
+}
+
+.segment input:checked + span {
+  background: var(--ink);
+  color: var(--panel);
+}
+
+.segment input:focus-visible + span {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid var(--shell);
+  outline-offset: 2px;
+}
+
+/* In the shell: the day tabs. The chosen tab is a piece of the card below it. */
+.segmented-tabs .segmented-row {
+  gap: 0;
+  padding-inline: 8px;
+  border: 0;
+  background: none;
+}
+
+.segmented-tabs .segment span {
+  min-height: 48px;
+  background: none;
+  color: var(--on-shell-2);
+  font-size: var(--text-l);
+  font-weight: 700;
+  font-stretch: 88%;
+}
+
+.segmented-tabs .segment input:hover + span {
+  background: rgb(255 255 255 / 0.12);
+  color: var(--on-shell);
+}
+
+.segmented-tabs .segment input:checked + span {
+  background: var(--ground);
+  color: var(--ink);
+}
+
+/* In the shell: the language switch. */
+.segmented-compact {
+  flex: none;
+}
+
+.segmented-compact .segmented-row {
+  border-color: var(--on-shell);
+  background: var(--on-shell);
+}
+
+.segmented-compact .segment span {
+  min-height: 40px;
+  padding: 4px 10px;
+  background: var(--shell);
+  color: var(--on-shell);
+  font-size: var(--text-s);
+}
+
+.segmented-compact .segment input:hover + span {
+  background: #2a4cae;
+}
+
+.segmented-compact .segment input:checked + span {
+  background: var(--on-shell);
+  color: var(--shell);
+}
+
+/* ---- Page and form ---- */
+
+.page {
+  flex: 1;
+  padding: 24px 16px 36px;
+}
+
+.page-flush {
+  padding: 0;
+}
+
+.page-title {
+  margin: 0 0 6px;
+  font-size: var(--text-title);
+  font-weight: 750;
+  font-stretch: 86%;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 0 0 28px;
+  color: var(--ink-2);
+}
+
+.form {
+  display: grid;
+  gap: 28px;
+}
+
+.field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field-label {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  font-weight: 700;
+}
+
+.field-sublabel {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink-2);
+  font-size: var(--text-s);
+  font-weight: 600;
+}
+
+.field-note {
+  margin: 8px 0 0;
+  color: var(--ink-2);
+  font-size: var(--text-s);
+}
+
+.field-note:empty {
+  display: none;
+}
+
+.field .pair {
+  margin-top: 12px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.input {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-l);
+}
+
+.input::placeholder {
+  color: #5d6377;
+}
+
+.input-figure {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.button {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--panel);
+  font: inherit;
+  font-size: var(--text-l);
+  font-weight: 700;
+  font-stretch: 92%;
+  line-height: 1.25;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--ease),
+    border-color 160ms var(--ease),
+    transform 160ms var(--ease);
+}
+
+.button:hover {
+  border-color: var(--shell);
+  background: var(--shell);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  border-color: var(--rule);
+  background: var(--rule);
+  color: var(--ink-2);
+  cursor: default;
+  transform: none;
+}
+
+.button-quiet {
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.button-quiet:hover {
+  border-color: var(--ink);
+  background: #e7eaf5;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--shell);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.button-link:hover {
+  color: var(--ink);
+}
+
+.notice {
+  margin: 0;
+  padding: 12px 14px;
+  border: 2px solid var(--danger);
+  background: var(--panel);
+  font-weight: 600;
+}
+
+/* ---- Plan: the stop-work window ---- */
+
+.summary {
+  display: grid;
+  grid-template-columns: 10px 1fr;
+  column-gap: 12px;
+  padding-block: 16px 14px;
+  padding-right: 16px;
+}
+
+/* The same ink bar that runs beside the stop-work hours below: the heading is its key. */
+.summary[data-stop]::before {
+  content: '';
+  background: var(--ink);
+}
+
+.summary > * {
+  grid-column: 2;
+}
+
+.summary-head {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.summary-label {
+  font-size: var(--text);
+  line-height: 1.3;
+}
+
+.summary-times {
+  font-size: var(--text-figure);
+  font-weight: 800;
+  font-stretch: 84%;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.summary-none {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* ---- Plan: the hour strip. One chip per hour, colour field joined to a white label. ---- */
+
+.strip {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  position: relative;
+  display: grid;
+  grid-template-columns: 10px 27% 3.9rem 1fr auto;
+  align-items: center;
+  min-height: 46px;
+  background: var(--panel);
+}
+
+.chip[data-band='SAFE'] {
+  --band: var(--safe);
+}
+.chip[data-band='CAUTION'] {
+  --band: var(--caution);
+}
+.chip[data-band='EXTREME_CAUTION'] {
+  --band: var(--extreme-caution);
+}
+.chip[data-band='DANGER'] {
+  --band: var(--danger);
+}
+.chip[data-band='EXTREME_DANGER'] {
+  --band: var(--extreme-danger);
+}
+
+.chip-rail {
+  align-self: stretch;
+  background: var(--ground);
+}
+
+/* The stop-work bracket: one unbroken ink bar down the stopped hours. */
+.chip[data-stop] .chip-rail {
+  margin-bottom: -2px;
+  background: var(--ink);
+}
+
+.chip[data-stop]:last-child .chip-rail,
+.chip[data-stop]:not(:has(+ .chip[data-stop])) .chip-rail {
+  margin-bottom: 0;
+}
+
+.chip-field {
+  align-self: stretch;
+  background: var(--band, var(--rule));
+}
+
+.chip-hour,
+.chip-temp {
+  font-size: var(--text-xl);
+  font-weight: 750;
+  font-stretch: 80%;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.chip-hour {
+  padding-left: 12px;
+}
+
+.chip-temp {
+  padding-right: 14px;
+  text-align: right;
+}
+
+.chip-name {
+  padding: 4px 8px;
+  font-size: var(--text-s);
+  font-weight: 650;
+  font-stretch: 82%;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* Devanagari has no capitals, and spacing it out breaks its joined letters. */
+:lang(hi) .chip-name {
+  font-size: 0.9375rem;
+  font-stretch: 90%;
+  letter-spacing: 0;
+}
+
+/* The one moving part: where the day is right now. */
+.chip[data-now] {
+  z-index: 1;
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+
+.chip-now {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  padding: 3px 8px 1px;
+  background: var(--panel);
+  font-size: var(--text-s);
+  font-weight: 700;
+  line-height: 1.3;
+  transform: translateY(-50%);
+}
+
+/* Paint rolled on: each colour field wipes in once when its plan arrives. */
+@keyframes roll {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+.chip-field {
+  animation: roll 520ms var(--ease) backwards;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+
+/* ---- Plan: the sections under the strip ---- */
+
+.block {
+  padding: 28px 16px 0;
+}
+
+.block-title {
+  margin: 0 0 8px;
+  font-size: var(--text-xl);
+  font-weight: 750;
+  font-stretch: 88%;
+  line-height: 1.25;
+}
+
+.block-note {
+  margin: 0 0 12px;
+  color: var(--ink-2);
+}
+
+.block .notice {
+  margin-bottom: 12px;
+}
+
+.plan-text {
+  max-width: 65ch;
+  margin: 0;
+  font-size: var(--text-l);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+/* The fixed safety warning: a chip of danger red printed over a black-ruled label. Never quiet. */
+.redflag {
+  margin: 28px 16px 0;
+  border: 3px solid var(--ink);
+  background: var(--panel);
+}
+
+.redflag::before {
+  content: '';
+  display: block;
+  height: 16px;
+  background: var(--danger);
+}
+
+.redflag-title {
+  margin: 0;
+  padding: 12px 14px 0;
+  font-size: var(--text-xl);
+  font-weight: 800;
+  font-stretch: 88%;
+  line-height: 1.25;
+}
+
+.redflag-text {
+  margin: 0;
+  padding: 6px 14px 14px;
+  font-size: var(--text-l);
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.player {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.points {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  list-style: none;
+}
+
+.point {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.point-name {
+  font-weight: 650;
+}
+
+.point-distance {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-align: right;
+}
+
+.point-type {
+  color: var(--ink-2);
+  font-size: var(--text-s);
+}
+
+.source {
+  margin: 28px 16px 0;
+  color: var(--ink-2);
+  font-size: var(--text-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.replay {
+  padding: 20px 16px 0;
+}
+
+/* ---- Loading and failed ---- */
+
+.state {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: 36px 16px;
+}
+
+.state-title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: 750;
+  font-stretch: 88%;
+  line-height: 1.3;
+}
+
+.state-note {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.state .button {
+  margin-top: 8px;
+}
+
+.roller {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+  background: var(--rule);
+}
+
+.roller::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--shell);
+  animation: sweep 1.5s var(--ease) infinite;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* While a plan is being built: the card with its chips not yet printed. */
+.strip-blank {
+  justify-self: stretch;
+  margin: 18px -16px 0;
+}
+
+.strip-blank .chip-field {
+  animation: none;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  padding: 32px 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip-field {
+    animation: none;
+  }
+
+  .roller::after {
+    width: 40%;
+    animation: none;
+  }
+
+  .button,
+  .segment span {
+    transition: none;
+  }
+}

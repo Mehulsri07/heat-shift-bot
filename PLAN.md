@@ -496,7 +496,8 @@ repo-root/
 - **`web/src/api.ts` is the API contract in TypeScript**: the types and one function per route. If the contract changes, change this brief first, then that file.
 - **App ID and name.** The Android app ID is `com.opuscube.app` and must not change once people have installed the app. The display name `OpusCube` is a placeholder, set in `web/capacitor.config.json` and `web/android/app/src/main/res/values/strings.xml`.
 - **Capacitor's config is JSON on purpose.** Its CLI cannot load a `.ts` config with TypeScript 7 on Node 22.
-- **App environment.** Copy `web/.env.example` to `web/.env.local` and fill it in; `.env.local` is never committed.
+- **App environment.** Copy `web/.env.example` to `web/.env.local` and fill it in; `.env.local` is never committed. Set `VITE_FIXTURES=1` there to run the app on the labelled fixtures in `web/src/fixtures/` without a backend; a production build must leave it unset.
+- **App design.** The look is recorded in `PRODUCT.md` (product facts) and `.impeccable/surfaces/` (the chosen direction, "Shade Card"): each hour is a flat chip of colour with its band name and temperature printed beside it. Keep new screens inside that system: square corners, flat colour, the five band colours used only for bands.
 
 ### Setup, in order
 
@@ -537,7 +538,7 @@ If you are a Claude Code session reading this file, these rules override your de
 ### Code conventions
 
 8. Backend: Python 3.11, type hints on all functions, standard library plus `boto3`, `requests` and `strands-agents` only, unless the team agrees otherwise.
-9. App: TypeScript with React, Vite and Capacitor (core, Android, and the geolocation, share and filesystem plugins) only, unless the team agrees otherwise.
+9. App: TypeScript with React, Vite and Capacitor (core, Android, and the geolocation, share and filesystem plugins), plus the bundled Anek Devanagari typeface (`@fontsource-variable/anek-devanagari`), only, unless the team agrees otherwise.
 10. All config comes from the environment variables listed in this brief. Never hard-code ARNs, account IDs, model IDs or API URLs. Nothing secret goes into the app bundle, and the signing keystore never goes in the repo.
 11. All times are timezone-aware in `Asia/Kolkata`. Store dates as `YYYY-MM-DD` and hours as `HH:MM`.
 12. No user-facing text inside `.py` or `.tsx` files. Backend fixed text goes in `src/copy/*.json`; UI text goes in `web/src/copy/*.json`, keyed by name, in both languages.
