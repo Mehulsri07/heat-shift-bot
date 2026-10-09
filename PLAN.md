@@ -11,17 +11,17 @@ It is team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon (He
 - **App name.** Needed for the icon label. The scaffold uses the placeholder `OpusCube` until the team decides.
 - **Stop window against the `DANGER` action text.** The stop window counts `DANGER` hours, but the `DANGER` action says "light tasks only". Recommended fix: change the `DANGER` action to "Stop outdoor work; light tasks in shade only". Needs a human decision before A writes the plan template.
 - **Exact deadline.** Confirm the cut-off time and time zone on the hackathon page.
-- **Names.** Who takes roles A and B, and who owns the video (see Unassigned work).
+- **Names.** Who takes role A, and who owns the video (see Unassigned work).
 - **Replay date.** D picks the May 2025 Jaipur heat day for the demo.
 
 ## Workload division
 
-Four people, four lanes, no shared files, and nobody waits on anybody. Every lane builds against a contract written in this brief and uses labelled fixtures until the real thing lands. A, B and C each drive a Claude Code session. D owns the datasets and the lighter coding. The video, the interviews and the Hindi review have no owner yet (see Unassigned work).
+Four people, four lanes, no shared files, and nobody waits on anybody. Every lane builds against a contract written in this brief and uses labelled fixtures until the real thing lands. A, B and C each drive a Claude Code session; Mehul holds both B and C, working the app and API first and the infra and release second. D owns the datasets and the lighter coding. The video, the interviews and the Hindi review have no owner yet (see Unassigned work).
 
 | Role | Person | One-line job | Files owned |
 |---|---|---|---|
 | A: Risk and agent | to be named | Turn hourly weather into a safe, checked plan | `src/risk.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/hi.json`, `src/copy/en.json`, `tests/test_risk.py`, `tests/test_guard.py` |
-| B: App screens | to be named | Build every screen of the React app | Everything under `web/` except `web/android/` and `web/capacitor.config.json` |
+| B: App screens | Mehul | Build every screen of the React app | Everything under `web/` except `web/android/` and `web/capacitor.config.json` |
 | C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `PLAN.md`, `CLAUDE.md`, requirements files, `pytest.ini` |
 | D: Data | Nemat | Supply the weather and cooling data, and the small modules that read it | `src/forecast.py`, `src/cooling.py`, `tests/test_forecast.py`, `tests/test_cooling.py`, `data/cooling_points_jaipur.json`, `scripts/seed_cooling_points.py`, `src/copy/red_flag.json` |
 
