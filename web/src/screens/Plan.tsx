@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { ApiError, getSite, requestVoice, type Band, type ReadyPlan, type Site } from '../api';
+import { ApiError, getSite, requestVoice, type ReadyPlan, type Site } from '../api';
 import { errorText, fill, type Language, type Strings } from '../copy';
 import { Segmented } from '../Segmented';
 import { isNativeApp, shareVoiceNote } from '../share';
@@ -14,9 +14,6 @@ interface Props {
 }
 
 type Day = 'today' | 'tomorrow' | 'date';
-
-// The five bands in their fixed order, used only to print the scale. The API decides every hour's band.
-const BANDS: Band[] = ['SAFE', 'CAUTION', 'EXTREME_CAUTION', 'DANGER', 'EXTREME_DANGER'];
 
 /** The current hour in Asia/Kolkata as "HH". */
 const istHour = () => new Date(Date.now() + 5.5 * 3_600_000).toISOString().slice(11, 13);
@@ -265,18 +262,6 @@ function ReadyPlanView({ t, siteId, plan, nowHour, onVoiceRequested }: ReadyProp
       )}
 
       <VoiceNote t={t} siteId={siteId} plan={plan} onRequested={onVoiceRequested} />
-
-      <section className="block">
-        <h2 className="block-title">{t.scale_heading}</h2>
-        <ol className="scale">
-          {BANDS.map((band) => (
-            <li key={band} className="scale-step" data-band={band}>
-              <span className="scale-swatch" aria-hidden="true" />
-              <span className="scale-name">{label[`band_${band}`]}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
 
       <p className="source">
         {plan.source === 'replay' ? t.source_replay : t.source_forecast}, {plan.date}

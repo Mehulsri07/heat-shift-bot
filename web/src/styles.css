@@ -88,7 +88,7 @@ input {
   color: var(--ink);
   font-size: 0.75rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 18px;
   text-align: center;
 }
 
@@ -119,8 +119,8 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 60px;
-  padding: 10px 16px;
+  height: 72px; /* on the 8px grid; see .chip */
+  padding: 0 16px;
 }
 
 .shell-title {
@@ -128,8 +128,12 @@ input {
   font-size: var(--text-xl);
   font-weight: 700;
   font-stretch: 88%;
+  display: -webkit-box;
+  overflow: hidden;
   line-height: 1.2;
   overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 /* ---- Segmented choice: joined blocks over real radio inputs ---- */
@@ -424,7 +428,7 @@ input {
   display: grid;
   grid-template-columns: 10px 1fr;
   column-gap: 12px;
-  padding-block: 16px 14px;
+  padding-block: 18px 16px; /* 96px in all, on the 8px grid */
   padding-right: 16px;
 }
 
@@ -440,14 +444,14 @@ input {
 
 .summary-head {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   margin: 0;
   font-weight: 700;
 }
 
 .summary-label {
   font-size: var(--text);
-  line-height: 1.3;
+  line-height: 22px;
 }
 
 .summary-times {
@@ -455,24 +459,21 @@ input {
   font-weight: 800;
   font-stretch: 84%;
   font-variant-numeric: tabular-nums;
-  line-height: 1.15;
+  line-height: 37px;
 }
 
 .summary-none {
   margin: 0;
   font-size: var(--text-xl);
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 26px;
 }
 
 /* ---- Plan: the hour strip. One chip per hour, colour field joined to a white label. ---- */
 
 .strip {
-  display: grid;
-  gap: 1px;
   margin: 0;
   padding: 0;
-  background: var(--rule-strong);
   list-style: none;
 }
 
@@ -481,8 +482,16 @@ input {
   display: grid;
   grid-template-columns: 10px 22% 3.7rem 1fr auto;
   align-items: center;
-  min-height: 46px;
+  /* 48px, like everything above the strip, is a multiple of 8: phones scale CSS pixels by
+     2.625, 2.75 or 3, and only multiples of 8 land on whole device pixels at all of them.
+     That keeps every rule one even weight and the bracket unbroken. */
+  min-height: 48px;
   background: var(--panel);
+}
+
+/* The rule between chips is a border, which browsers snap to whole device pixels. */
+.chip + .chip {
+  border-top: 1px solid var(--rule-strong);
 }
 
 [data-band='SAFE'] {
@@ -501,20 +510,19 @@ input {
   --band: var(--extreme-danger);
 }
 
+/* The rail sits over the rule above it, so the gutter stays clean and the bracket is unbroken. */
 .chip-rail {
   align-self: stretch;
   background: var(--ground);
 }
 
-/* The stop-work bracket: one unbroken ink bar down the stopped hours. */
-.chip[data-stop] .chip-rail {
-  margin-bottom: -1px;
-  background: var(--ink);
+.chip + .chip .chip-rail {
+  margin-top: -1px;
 }
 
-.chip[data-stop]:last-child .chip-rail,
-.chip[data-stop]:not(:has(+ .chip[data-stop])) .chip-rail {
-  margin-bottom: 0;
+/* The stop-work bracket: one unbroken ink bar down the stopped hours. */
+.chip[data-stop] .chip-rail {
+  background: var(--ink);
 }
 
 .chip-field {
@@ -673,36 +681,6 @@ input {
   background: var(--panel);
 }
 
-/* The full shade card: all five bands in order, so one day's colours can be placed on the scale. */
-.scale {
-  display: grid;
-  gap: 1px;
-  margin: 0;
-  padding: 0;
-  background: var(--rule-strong);
-  list-style: none;
-}
-
-.scale-step {
-  display: grid;
-  grid-template-columns: 22% 1fr;
-  align-items: center;
-  min-height: 34px;
-  background: var(--panel);
-}
-
-.scale-swatch {
-  align-self: stretch;
-  background: var(--band);
-}
-
-.scale-name {
-  padding: 4px 12px;
-  font-weight: 650;
-  font-stretch: 88%;
-  line-height: 1.25;
-}
-
 .points {
   margin: 0;
   padding: 0;
@@ -800,7 +778,10 @@ input {
 .strip-blank {
   justify-self: stretch;
   margin: 18px -16px 0;
-  background: var(--rule);
+}
+
+.strip-blank .chip + .chip {
+  border-top-color: var(--rule);
 }
 
 .strip-blank .chip-field {

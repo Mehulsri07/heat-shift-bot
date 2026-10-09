@@ -31,5 +31,4 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 - **Stop times live in the heading, not on the bracket.** The contract put the start and end times at the bracket's two ends. A 10px gutter cannot carry readable times in sunlight, in Devanagari or Latin, without rotated or very small type. The times are set at figure size in the heading directly above the strip, and the same ink bar sits beside that heading as the bracket's key. Reason: the user's answer that field readability wins.
 - **Three day tabs and a language switch in the shell.** The contract named Today and Tomorrow; the original request also asks for a past date (replay) and a Hindi and English toggle.
-- **A scale of all five bands** closes the plan screen, so a day that shows only two colours can be placed on the full card.
 - **Order under the strip** follows PLAN.md: plan text, red-flag warning, cooling points, voice note.
