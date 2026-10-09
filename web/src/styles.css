@@ -7,6 +7,7 @@
   --ink: #12141c;
   --ink-2: #454b5e;
   --rule: #c9cdd9;
+  --rule-strong: #9aa1b5; /* the line between chips: has to survive sunlight */
   --desk: #dde0ea; /* what shows beside the card on a wide screen */
 
   --shell: #1b3a93; /* ultramarine: the one hue that is off the risk scale */
@@ -77,6 +78,18 @@ input {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Only while VITE_FIXTURES=1: marks every screen as test data. Never in a production build. */
+.fixture-banner {
+  margin: 0;
+  padding: 3px 16px;
+  background: var(--caution);
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
 }
 
 .app {
@@ -218,11 +231,12 @@ input {
 }
 
 .segmented-compact .segment span {
-  min-height: 40px;
-  padding: 4px 10px;
+  min-height: 48px;
+  padding: 4px 12px;
   background: var(--shell);
-  color: var(--on-shell);
-  font-size: var(--text-s);
+  color: var(--on-shell-2);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .segmented-compact .segment input:hover + span {
@@ -231,7 +245,8 @@ input {
 
 .segmented-compact .segment input:checked + span {
   background: var(--on-shell);
-  color: var(--shell);
+  color: var(--ink);
+  font-weight: 800;
 }
 
 /* ---- Page and form ---- */
@@ -454,34 +469,35 @@ input {
 
 .strip {
   display: grid;
-  gap: 2px;
+  gap: 1px;
   margin: 0;
   padding: 0;
+  background: var(--rule-strong);
   list-style: none;
 }
 
 .chip {
   position: relative;
   display: grid;
-  grid-template-columns: 10px 27% 3.9rem 1fr auto;
+  grid-template-columns: 10px 22% 3.7rem 1fr auto;
   align-items: center;
   min-height: 46px;
   background: var(--panel);
 }
 
-.chip[data-band='SAFE'] {
+[data-band='SAFE'] {
   --band: var(--safe);
 }
-.chip[data-band='CAUTION'] {
+[data-band='CAUTION'] {
   --band: var(--caution);
 }
-.chip[data-band='EXTREME_CAUTION'] {
+[data-band='EXTREME_CAUTION'] {
   --band: var(--extreme-caution);
 }
-.chip[data-band='DANGER'] {
+[data-band='DANGER'] {
   --band: var(--danger);
 }
-.chip[data-band='EXTREME_DANGER'] {
+[data-band='EXTREME_DANGER'] {
   --band: var(--extreme-danger);
 }
 
@@ -492,7 +508,7 @@ input {
 
 /* The stop-work bracket: one unbroken ink bar down the stopped hours. */
 .chip[data-stop] .chip-rail {
-  margin-bottom: -2px;
+  margin-bottom: -1px;
   background: var(--ink);
 }
 
@@ -503,42 +519,46 @@ input {
 
 .chip-field {
   align-self: stretch;
+  margin-left: 4px;
   background: var(--band, var(--rule));
 }
 
 .chip-hour,
 .chip-temp {
-  font-size: var(--text-xl);
-  font-weight: 750;
   font-stretch: 80%;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
 .chip-hour {
-  padding-left: 12px;
+  padding-left: 10px;
+  font-size: var(--text-xl);
+  font-weight: 750;
 }
 
-.chip-temp {
-  padding-right: 14px;
-  text-align: right;
-}
-
+/* The printed shade name is the chip's main text; the temperature supports it. */
 .chip-name {
-  padding: 4px 8px;
-  font-size: var(--text-s);
-  font-weight: 650;
-  font-stretch: 82%;
-  letter-spacing: 0.03em;
-  line-height: 1.2;
+  padding: 4px 6px;
+  font-size: var(--text-l);
+  font-weight: 750;
+  font-stretch: 76%;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
 /* Devanagari has no capitals, and spacing it out breaks its joined letters. */
 :lang(hi) .chip-name {
-  font-size: 0.9375rem;
-  font-stretch: 90%;
+  font-stretch: 84%;
   letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.chip-temp {
+  padding-right: 12px;
+  font-size: var(--text-l);
+  font-weight: 650;
+  text-align: right;
 }
 
 /* The one moving part: where the day is right now. */
@@ -551,7 +571,7 @@ input {
 .chip-now {
   position: absolute;
   top: 50%;
-  left: 18px;
+  left: 20px;
   padding: 3px 8px 1px;
   background: var(--panel);
   font-size: var(--text-s);
@@ -642,6 +662,45 @@ input {
   display: block;
   width: 100%;
   margin-bottom: 12px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--panel);
+}
+
+/* The browser draws its player as a grey pill; square it and put it on the label white. */
+.player::-webkit-media-controls-enclosure {
+  border-radius: 0;
+  background: var(--panel);
+}
+
+/* The full shade card: all five bands in order, so one day's colours can be placed on the scale. */
+.scale {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  background: var(--rule-strong);
+  list-style: none;
+}
+
+.scale-step {
+  display: grid;
+  grid-template-columns: 22% 1fr;
+  align-items: center;
+  min-height: 34px;
+  background: var(--panel);
+}
+
+.scale-swatch {
+  align-self: stretch;
+  background: var(--band);
+}
+
+.scale-name {
+  padding: 4px 12px;
+  font-weight: 650;
+  font-stretch: 88%;
+  line-height: 1.25;
 }
 
 .points {
@@ -741,6 +800,7 @@ input {
 .strip-blank {
   justify-self: stretch;
   margin: 18px -16px 0;
+  background: var(--rule);
 }
 
 .strip-blank .chip-field {

@@ -1,5 +1,5 @@
 {
-  "_fixture": "FIXTURE, not live data. Hours are the real Open-Meteo archive values for Jaipur (26.9124, 75.7873) on 2025-05-20, shift 07:00-18:00, direct sun off. Bands and heat index were computed with the rules in PLAN.md by a one-off script, not by src/risk.py. plan_text, red_flag and cooling_points are placeholders: the three cooling points are not real places.",
+  "_fixture": "FIXTURE, not live data. Hours are the real Open-Meteo archive values for Jaipur (26.9124, 75.7873) on 2025-05-20, shift 07:00-18:00, direct sun ON (each hour raised one band). Bands and heat index were computed with the rules in PLAN.md by a one-off script, not by src/risk.py. plan_text, red_flag and cooling_points are placeholders: the three cooling points are not real places.",
   "status": "ready",
   "site_id": "00000000-0000-4000-8000-000000000000",
   "date": "2025-05-20",
@@ -10,84 +10,84 @@
       "temp_c": 33.1,
       "rh": 39.0,
       "heat_index_c": 33.7,
-      "band": "EXTREME_CAUTION"
+      "band": "DANGER"
     },
     {
       "hour": "08:00",
       "temp_c": 34.9,
       "rh": 34.0,
       "heat_index_c": 35.4,
-      "band": "EXTREME_CAUTION"
+      "band": "DANGER"
     },
     {
       "hour": "09:00",
       "temp_c": 37.1,
       "rh": 29.0,
       "heat_index_c": 37.6,
-      "band": "EXTREME_CAUTION"
+      "band": "DANGER"
     },
     {
       "hour": "10:00",
       "temp_c": 38.7,
       "rh": 24.0,
       "heat_index_c": 38.7,
-      "band": "EXTREME_CAUTION"
+      "band": "DANGER"
     },
     {
       "hour": "11:00",
       "temp_c": 40.1,
       "rh": 21.0,
       "heat_index_c": 39.8,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     },
     {
       "hour": "12:00",
       "temp_c": 41.4,
       "rh": 18.0,
       "heat_index_c": 40.7,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     },
     {
       "hour": "13:00",
       "temp_c": 41.9,
       "rh": 16.0,
       "heat_index_c": 40.7,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     },
     {
       "hour": "14:00",
       "temp_c": 42.3,
       "rh": 14.0,
       "heat_index_c": 40.5,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     },
     {
       "hour": "15:00",
       "temp_c": 42.4,
       "rh": 13.0,
       "heat_index_c": 40.3,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     },
     {
       "hour": "16:00",
       "temp_c": 42.2,
       "rh": 12.0,
       "heat_index_c": 39.7,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     },
     {
       "hour": "17:00",
       "temp_c": 41.7,
       "rh": 12.0,
       "heat_index_c": 39.1,
-      "band": "DANGER"
+      "band": "EXTREME_DANGER"
     }
   ],
   "stop_window": {
-    "start": "11:00",
+    "start": "07:00",
     "end": "18:00"
   },
-  "max_band": "DANGER",
+  "max_band": "EXTREME_DANGER",
   "plan_text": "FIXTURE PLAN TEXT. The real text comes from the planner.",
   "red_flag": "FIXTURE RED-FLAG TEXT. The real warning is human-written and comes from the API.",
   "cooling_points": [

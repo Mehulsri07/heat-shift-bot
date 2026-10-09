@@ -26,3 +26,10 @@ FIRST VIEWPORT: Ultramarine header with the site name and the Today and Tomorrow
 FORM: Shade card, position 6 on the grounded list. Signature move: the hour strip as paint chips with printed names, plus one moving part, the marker for the current hour on today's strip. Seed key 06ec451c.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+## Adaptations recorded after the first finish review
+
+- **Stop times live in the heading, not on the bracket.** The contract put the start and end times at the bracket's two ends. A 10px gutter cannot carry readable times in sunlight, in Devanagari or Latin, without rotated or very small type. The times are set at figure size in the heading directly above the strip, and the same ink bar sits beside that heading as the bracket's key. Reason: the user's answer that field readability wins.
+- **Three day tabs and a language switch in the shell.** The contract named Today and Tomorrow; the original request also asks for a past date (replay) and a Hindi and English toggle.
+- **A scale of all five bands** closes the plan screen, so a day that shows only two colours can be placed on the full card.
+- **Order under the strip** follows PLAN.md: plan text, red-flag warning, cooling points, voice note.

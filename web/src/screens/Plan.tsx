@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { ApiError, getSite, requestVoice, type ReadyPlan, type Site } from '../api';
+import { ApiError, getSite, requestVoice, type Band, type ReadyPlan, type Site } from '../api';
 import { errorText, fill, type Language, type Strings } from '../copy';
 import { Segmented } from '../Segmented';
 import { isNativeApp, shareVoiceNote } from '../share';
@@ -15,10 +15,40 @@ interface Props {
 
 type Day = 'today' | 'tomorrow' | 'date';
 
+// The five bands in their fixed order, used only to print the scale. The API decides every hour's band.
+const BANDS: Band[] = ['SAFE', 'CAUTION', 'EXTREME_CAUTION', 'DANGER', 'EXTREME_DANGER'];
+
+/** The current hour in Asia/Kolkata as "HH". */
+const istHour = () => new Date(Date.now() + 5.5 * 3_600_000).toISOString().slice(11, 13);
+
+/** Re-read the clock every minute and when the app comes back to the front, so nothing on screen goes stale. */
+function useIstHour(): string {
+  const [hour, setHour] = useState(istHour);
+  useEffect(() => {
+    const tick = () => setHour(istHour());
+    const timer = setInterval(tick, 60_000);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', tick);
+    };
+  }, []);
+  return hour;
+}
+
+/** How many chips the blank card should show while a plan is being built. */
+function shiftLength(site: Site | null): number {
+  if (!site) return 11;
+  const hours = Number(site.shift_end.slice(0, 2)) - Number(site.shift_start.slice(0, 2));
+  return hours > 0 ? hours : 11;
+}
+
 export function Plan({ t, language, onLanguage, siteId, onChangeSite }: Props) {
   const [site, setSite] = useState<Site | null>(null);
   const [day, setDay] = useState<Day>('tomorrow');
   const [replayDate, setReplayDate] = useState('');
+  const nowHour = useIstHour(); // also re-renders at midnight, so Today and Tomorrow move on
+  const blanks = shiftLength(site);
 
   useEffect(() => {
     let live = true;
@@ -69,10 +99,10 @@ export function Plan({ t, language, onLanguage, siteId, onChangeSite }: Props) {
       <main className="page page-flush">
         {/* Today and Tomorrow are both loaded up front, so switching never waits. */}
         <div hidden={day !== 'today'}>
-          <DayPlan t={t} siteId={siteId} date={istDate(0)} isToday />
+          <DayPlan t={t} siteId={siteId} date={istDate(0)} nowHour={nowHour} blanks={blanks} />
         </div>
         <div hidden={day !== 'tomorrow'}>
-          <DayPlan t={t} siteId={siteId} date={istDate(1)} />
+          <DayPlan t={t} siteId={siteId} date={istDate(1)} blanks={blanks} />
         </div>
         {day === 'date' && (
           <>
@@ -90,7 +120,7 @@ export function Plan({ t, language, onLanguage, siteId, onChangeSite }: Props) {
               />
               {!replayDate && <p className="field-note">{t.replay_date_hint}</p>}
             </div>
-            {replayDate && <DayPlan key={replayDate} t={t} siteId={siteId} date={replayDate} />}
+            {replayDate && <DayPlan key={replayDate} t={t} siteId={siteId} date={replayDate} blanks={blanks} />}
           </>
         )}
       </main>
@@ -113,10 +143,12 @@ interface DayProps {
   t: Strings;
   siteId: string;
   date: string;
-  isToday?: boolean;
+  /** Set only for today: the hour to mark as current. */
+  nowHour?: string;
+  blanks: number;
 }
 
-function DayPlan({ t, siteId, date, isToday }: DayProps) {
+function DayPlan({ t, siteId, date, nowHour, blanks }: DayProps) {
   const { state, retry, refresh } = usePlan(siteId, date);
 
   if (state.phase === 'loading') {
@@ -126,7 +158,7 @@ function DayPlan({ t, siteId, date, isToday }: DayProps) {
         <p className="state-note">{t.loading_hint}</p>
         <div className="roller" aria-hidden="true" />
         <ol className="strip strip-blank" aria-hidden="true">
-          {Array.from({ length: 8 }, (_, index) => (
+          {Array.from({ length: blanks }, (_, index) => (
             <li key={index} className="chip">
               <span className="chip-rail" />
               <span className="chip-field" />
@@ -148,25 +180,21 @@ function DayPlan({ t, siteId, date, isToday }: DayProps) {
     );
   }
 
-  return <ReadyPlanView t={t} siteId={siteId} plan={state.plan} isToday={isToday} onVoiceRequested={refresh} />;
+  return <ReadyPlanView t={t} siteId={siteId} plan={state.plan} nowHour={nowHour} onVoiceRequested={refresh} />;
 }
-
-/** The current hour in Asia/Kolkata as "HH", used only to mark today's current row. */
-const istHour = () => new Date(Date.now() + 5.5 * 3_600_000).toISOString().slice(11, 13);
 
 interface ReadyProps {
   t: Strings;
   siteId: string;
   plan: ReadyPlan;
-  isToday?: boolean;
+  nowHour?: string;
   onVoiceRequested: () => void;
 }
 
 // Everything below shows what the API returned. Nothing here decides a band, a time or a warning.
-function ReadyPlanView({ t, siteId, plan, isToday, onVoiceRequested }: ReadyProps) {
+function ReadyPlanView({ t, siteId, plan, nowHour, onVoiceRequested }: ReadyProps) {
   const stop = plan.stop_window;
-  const nowHour = isToday ? istHour() : null;
-  const bandName = t as unknown as Record<string, string>;
+  const label = t as unknown as Record<string, string>;
 
   return (
     <>
@@ -199,7 +227,7 @@ function ReadyPlanView({ t, siteId, plan, isToday, onVoiceRequested }: ReadyProp
               <span className="chip-field" aria-hidden="true" />
               <span className="chip-hour">{hour.hour}</span>
               <span className="chip-name">
-                {bandName[`band_${hour.band}`] ?? hour.band}
+                {label[`band_${hour.band}`] ?? hour.band}
                 {stopped && <span className="visually-hidden">, {t.stop_mark}</span>}
               </span>
               <span className="chip-temp">{fill(t.temp, { t: hour.temp_c })}</span>
@@ -221,8 +249,6 @@ function ReadyPlanView({ t, siteId, plan, isToday, onVoiceRequested }: ReadyProp
         </section>
       )}
 
-      <VoiceNote t={t} siteId={siteId} plan={plan} onRequested={onVoiceRequested} />
-
       {plan.cooling_points.length > 0 && (
         <section className="block">
           <h2 className="block-title">{t.cooling_heading}</h2>
@@ -231,12 +257,26 @@ function ReadyPlanView({ t, siteId, plan, isToday, onVoiceRequested }: ReadyProp
               <li key={`${point.name}-${point.lat}-${point.lon}`} className="point">
                 <span className="point-name">{point.name}</span>
                 <span className="point-distance">{fill(t.distance_km, { km: point.distance_km })}</span>
-                <span className="point-type">{bandName[`cooling_${point.type}`] ?? point.type}</span>
+                <span className="point-type">{label[`cooling_${point.type}`] ?? point.type}</span>
               </li>
             ))}
           </ul>
         </section>
       )}
+
+      <VoiceNote t={t} siteId={siteId} plan={plan} onRequested={onVoiceRequested} />
+
+      <section className="block">
+        <h2 className="block-title">{t.scale_heading}</h2>
+        <ol className="scale">
+          {BANDS.map((band) => (
+            <li key={band} className="scale-step" data-band={band}>
+              <span className="scale-swatch" aria-hidden="true" />
+              <span className="scale-name">{label[`band_${band}`]}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       <p className="source">
         {plan.source === 'replay' ? t.source_replay : t.source_forecast}, {plan.date}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { copy, type Language } from './copy';
+import { FIXTURE_BANNER } from './fixtures';
 import { Plan } from './screens/Plan';
 import { Setup } from './screens/Setup';
 
@@ -42,6 +43,7 @@ export default function App() {
 
   return (
     <div className="app">
+      {import.meta.env.VITE_FIXTURES === '1' && <p className="fixture-banner">{FIXTURE_BANNER}</p>}
       {siteId ? (
         <Plan t={t} language={language} onLanguage={setLanguage} siteId={siteId} onChangeSite={changeSite} />
       ) : (
