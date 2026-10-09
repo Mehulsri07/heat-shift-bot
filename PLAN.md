@@ -493,8 +493,8 @@ repo-root/
 - **Tests** run from the repo root with `pytest`; they also use flat imports.
 - **Backend copy** ships inside the package: load it with `Path(__file__).parent / "copy" / "hi.json"` from a module in `src/`. The red-flag text is separate, in `src/copy/red_flag.json` as `{"hi": "...", "en": "..."}`; `api` returns an error for a dangerous plan if it is missing.
 - **`planner` is never retried** on failure, so a crash cannot build or voice the same plan twice. Set the status to `failed` and log.
-- **CI checks every pull request** (`.github/workflows/ci.yml`): Python lint with security rules, tests, dependency audits, the app's lint, type-check and build, the SAM template and Lambda package, a secret scan and code scanning. Run the same commands locally first (rule 13). A lint finding is fixed in the code, not silenced; an ignore needs a one-line reason beside it.
-- **The one shared edit.** The Checklists section of this file is for tracking: every lane ticks its own boxes there. Pull first, tick only your own, and change nothing else in `PLAN.md`.
+- **CI checks every pull request, and `main` only accepts pull requests that pass it** (`.github/workflows/ci.yml`): Python lint with security rules, tests, dependency audits, the app's lint, type-check and build, the SAM template and Lambda package, a secret scan and code scanning. Run the same commands locally first (rule 13). A lint finding is fixed in the code, not silenced; an ignore needs a one-line reason beside it.
+- **The one shared edit.** The Checklists section of this file is for tracking: every lane ticks its own boxes there, in the same pull request as the work that finishes them. Tick only your own, and change nothing else in `PLAN.md`.
 - **The APK is a build output.** It is never committed; C builds it from `main` and uploads it.
 - **The app is scaffolded.** `web/` already builds: `npm run build` type-checks and builds the web app, and `npm run android` builds it and syncs it into `web/android`. B replaces the placeholder screen in `App.tsx`; only C runs the Android build.
 - **`web/src/api.ts` is the API contract in TypeScript**: the types and one function per route. If the contract changes, change this brief first, then that file.
@@ -552,7 +552,7 @@ If you are a Claude Code session reading this file, these rules override your de
 ### Working together
 
 15. Before changing a shared interface (API routes or fields, tool signatures, table attributes, the `planner` payload), state the change and wait for the human to confirm with the other owners.
-16. Keep commits small, with messages like `risk: add direct-sun band bump`. Pull before you start; never force-push to `main`.
+16. Keep commits small, with messages like `risk: add direct-sun band bump`. `main` is protected: nobody can push to it directly. Pull `main`, work on a branch, push the branch and open a pull request. It can be merged once the "All checks" status is green; no approval is needed.
 17. After the Saturday 12:00 IST feature freeze, make bug fixes only.
 
 ## Definition of done
