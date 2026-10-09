@@ -85,7 +85,7 @@ def _body(event: dict) -> dict:
     try:
         body = json.loads(raw)
     except ValueError:
-        raise ApiError(400, "invalid_json")
+        raise ApiError(400, "invalid_json") from None
     if not isinstance(body, dict):
         raise ApiError(400, "invalid_json")
     return body
@@ -160,7 +160,7 @@ def request_plan(body: dict, site_id: str) -> dict:
     try:
         day = date.fromisoformat(body.get("date", ""))
     except (TypeError, ValueError):
-        raise ApiError(400, "invalid_date")
+        raise ApiError(400, "invalid_date") from None
     if day > _now().date() + timedelta(days=MAX_DAYS_AHEAD):
         raise ApiError(400, "invalid_date")
     _site(site_id)

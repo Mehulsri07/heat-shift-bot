@@ -193,7 +193,7 @@ export function Setup({ t, language, onLanguage, onSaved }: Props) {
             </p>
           )}
 
-          <button className="button" disabled={saving}>
+          <button type="submit" className="button" disabled={saving}>
             {saving ? t.saving : t.save_site}
           </button>
         </form>

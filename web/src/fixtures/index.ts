@@ -11,9 +11,6 @@ import type { Plan, ReadyPlan, Site, SiteInput } from '../api';
 import sunJson from './plan-2025-05-20-direct-sun.json';
 import planJson from './plan-2025-05-20.json';
 
-/** Shown across the top of every screen while fixtures are on, so no recording passes for live data. */
-export const FIXTURE_BANNER = 'FIXTURE DATA: Jaipur weather of 20 May 2025. Not live.';
-
 const SITE_ID = planJson.site_id;
 const READY_AFTER_MS = 2500; // long enough to see the loading state
 const mode = new URLSearchParams(location.search).get('fixture');
@@ -31,7 +28,9 @@ function silentAudioUrl(): string {
   const samples = 8000;
   const wav = new Uint8Array(44 + samples).fill(0x80, 44);
   const view = new DataView(wav.buffer);
-  const text = (offset: number, value: string) => [...value].forEach((c, i) => view.setUint8(offset + i, c.charCodeAt(0)));
+  const text = (offset: number, value: string) => {
+    for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+  };
   text(0, 'RIFF');
   view.setUint32(4, 36 + samples, true);
   text(8, 'WAVEfmt ');

@@ -1,7 +1,5 @@
 // The API contract from PLAN.md, in TypeScript. Change the brief first, then this file.
 
-import { fixtureApi } from './fixtures';
-
 const BASE: string = import.meta.env.VITE_API_BASE ?? '';
 
 export type Band = 'SAFE' | 'CAUTION' | 'EXTREME_CAUTION' | 'DANGER' | 'EXTREME_DANGER';
@@ -97,5 +95,6 @@ const liveApi = {
 };
 
 // VITE_FIXTURES=1 swaps in labelled fixtures so screens can be built before the API is live.
+// They are imported only then, so a production bundle contains no fixture data (CI checks this).
 export const { createSite, getSite, requestPlan, getPlan, requestVoice } =
-  import.meta.env.VITE_FIXTURES === '1' ? fixtureApi : liveApi;
+  import.meta.env.VITE_FIXTURES === '1' ? (await import('./fixtures')).fixtureApi : liveApi;
