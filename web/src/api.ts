@@ -1,5 +1,7 @@
 // The API contract from PLAN.md, in TypeScript. Change the brief first, then this file.
 
+import { fixtureApi } from './fixtures';
+
 const BASE: string = import.meta.env.VITE_API_BASE ?? '';
 
 export type Band = 'SAFE' | 'CAUTION' | 'EXTREME_CAUTION' | 'DANGER' | 'EXTREME_DANGER';
@@ -80,15 +82,20 @@ async function call<T>(method: 'GET' | 'POST', path: string, body?: unknown): Pr
   return data as T;
 }
 
-export const createSite = (site: SiteInput) => call<{ site_id: string }>('POST', '/api/sites', site);
+const liveApi = {
+  createSite: (site: SiteInput) => call<{ site_id: string }>('POST', '/api/sites', site),
 
-export const getSite = (siteId: string) => call<Site>('GET', `/api/sites/${siteId}`);
+  getSite: (siteId: string) => call<Site>('GET', `/api/sites/${siteId}`),
 
-export const requestPlan = (siteId: string, date: string) =>
-  call<{ status: 'pending' | 'ready' }>('POST', `/api/sites/${siteId}/plans`, { date });
+  requestPlan: (siteId: string, date: string) =>
+    call<{ status: 'pending' | 'ready' }>('POST', `/api/sites/${siteId}/plans`, { date }),
 
-export const getPlan = (siteId: string, date: string) =>
-  call<Plan>('GET', `/api/sites/${siteId}/plans/${date}`);
+  getPlan: (siteId: string, date: string) => call<Plan>('GET', `/api/sites/${siteId}/plans/${date}`),
 
-export const requestVoice = (siteId: string, date: string) =>
-  call<{ audio_status: 'pending' | 'ready' }>('POST', `/api/sites/${siteId}/plans/${date}/voice`);
+  requestVoice: (siteId: string, date: string) =>
+    call<{ audio_status: 'pending' | 'ready' }>('POST', `/api/sites/${siteId}/plans/${date}/voice`),
+};
+
+// VITE_FIXTURES=1 swaps in labelled fixtures so screens can be built before the API is live.
+export const { createSite, getSite, requestPlan, getPlan, requestVoice } =
+  import.meta.env.VITE_FIXTURES === '1' ? fixtureApi : liveApi;

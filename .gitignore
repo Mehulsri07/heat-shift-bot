@@ -14,3 +14,9 @@ web/dist/
 *.aab
 *.keystore
 *.jks
+
+# design skill working files
+.impeccable/questions/
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/build/
