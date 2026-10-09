@@ -22,7 +22,7 @@ Four people, four lanes, no shared files, and nobody waits on anybody. Every lan
 |---|---|---|---|
 | A: Risk and agent | to be named | Turn hourly weather into a safe, checked plan | `src/risk.py`, `src/agent.py`, `src/guard.py`, `src/handlers/planner.py`, `src/copy/hi.json`, `src/copy/en.json`, `tests/test_risk.py`, `tests/test_guard.py` |
 | B: App screens | to be named | Build every screen of the React app | Everything under `web/` except `web/android/` and `web/capacitor.config.json` |
-| C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `PLAN.md`, requirements files, `pytest.ini` |
+| C: Infra, API and release | Mehul | Run AWS, the API, the Android build and every deploy | `template.yaml`, `samconfig.toml`, `src/handlers/api.py`, `src/voice.py`, `tests/test_api.py`, `web/android/`, `web/capacitor.config.json`, `README.md`, `PLAN.md`, `CLAUDE.md`, requirements files, `pytest.ini` |
 | D: Data | Nemat | Supply the weather and cooling data, and the small modules that read it | `src/forecast.py`, `src/cooling.py`, `tests/test_forecast.py`, `tests/test_cooling.py`, `data/cooling_points_jaipur.json`, `scripts/seed_cooling_points.py`, `src/copy/red_flag.json` |
 
 ### A: Risk and agent
@@ -437,6 +437,7 @@ One repo, one owner per file, so the three Claude Code sessions never edit the s
 ```
 repo-root/
   PLAN.md                       # this brief (C)
+  CLAUDE.md                     # one line that loads PLAN.md into Claude Code sessions (C)
   README.md                     # problem, architecture, AWS services, setup (C)
   template.yaml                 # SAM: CloudFront, buckets, API, 2 Lambdas, 3 tables, schedule, IAM (C)
   samconfig.toml                # deploy settings (C)
@@ -500,7 +501,7 @@ repo-root/
 ### Setup, in order
 
 1. Everyone: create and verify an AWS Builder Center student profile.
-2. Everyone: pull the repo. If you use Claude Code, start each session by telling it to read `PLAN.md`; it is not loaded automatically.
+2. Everyone: pull the repo. Claude Code sessions load this brief automatically, through `CLAUDE.md`.
 3. C: set up the `opuscube` AWS profile and a Budgets alert at $10.
 4. C: get Bedrock access for Claude Haiku in `us-east-1`, and create a Bedrock-only IAM user for A.
 5. A, C and D: install Python 3.11+, then `pip install -r requirements.txt`. C also needs AWS CLI v2, SAM CLI and Docker.
