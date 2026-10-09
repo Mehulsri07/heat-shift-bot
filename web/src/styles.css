@@ -13,6 +13,9 @@
   --shell: #1b3a93; /* ultramarine: the one hue that is off the risk scale */
   --on-shell: #ffffff;
   --on-shell-2: #d3dbf6;
+  --shell-hover: #2a4cae;
+  --tint: #e7eaf5; /* hover on white controls, and text selection */
+  --placeholder: #5d6377;
 
   /* The five bands, in order. Only the API decides which hour gets which. */
   --safe: #2e8b4e;
@@ -53,7 +56,7 @@ body {
 }
 
 ::selection {
-  background: var(--caution);
+  background: var(--tint);
   color: var(--ink);
 }
 
@@ -182,7 +185,7 @@ input {
 }
 
 .segment input:hover + span {
-  background: #e7eaf5;
+  background: var(--tint);
 }
 
 .segment input:checked + span {
@@ -244,7 +247,7 @@ input {
 }
 
 .segmented-compact .segment input:hover + span {
-  background: #2a4cae;
+  background: var(--shell-hover);
 }
 
 .segmented-compact .segment input:checked + span {
@@ -338,7 +341,7 @@ input {
 }
 
 .input::placeholder {
-  color: #5d6377;
+  color: var(--placeholder);
 }
 
 .input-figure {
@@ -391,7 +394,7 @@ input {
 
 .button-quiet:hover {
   border-color: var(--ink);
-  background: #e7eaf5;
+  background: var(--tint);
 }
 
 .button-link {
@@ -417,7 +420,7 @@ input {
 .notice {
   margin: 0;
   padding: 12px 14px;
-  border: 2px solid var(--danger);
+  border: 2px solid var(--ink);
   background: var(--panel);
   font-weight: 600;
 }

@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-09T00:00:00+05:30",
+  "title": "Design System: OpusCube (placeholder name)",
+  "extensions": {
+    "colorMeta": {
+      "shell": {
+        "role": "primary",
+        "displayName": "Ultramarine Shell",
+        "canonical": "#1b3a93",
+        "tonalRamp": ["oklch(15% 0.15 265)", "oklch(26% 0.15 265)", "oklch(38% 0.15 265)", "oklch(50% 0.15 265)", "oklch(62% 0.15 265)", "oklch(74% 0.12 265)", "oklch(86% 0.07 265)", "oklch(95% 0.03 265)"]
+      },
+      "on-shell": { "role": "primary", "displayName": "Shell White", "canonical": "#ffffff" },
+      "on-shell-2": { "role": "primary", "displayName": "Shell Mist", "canonical": "#d3dbf6" },
+      "shell-hover": { "role": "primary", "displayName": "Shell Lift", "canonical": "#2a4cae" },
+      "safe": {
+        "role": "secondary",
+        "displayName": "Safe Green",
+        "canonical": "#2e8b4e",
+        "tonalRamp": ["oklch(15% 0.13 150)", "oklch(27% 0.13 150)", "oklch(39% 0.13 150)", "oklch(56% 0.13 150)", "oklch(67% 0.13 150)", "oklch(78% 0.11 150)", "oklch(88% 0.07 150)", "oklch(95% 0.03 150)"]
+      },
+      "caution": {
+        "role": "secondary",
+        "displayName": "Caution Yellow",
+        "canonical": "#f0c22b",
+        "tonalRamp": ["oklch(15% 0.04 90)", "oklch(28% 0.07 90)", "oklch(42% 0.10 90)", "oklch(56% 0.13 90)", "oklch(70% 0.16 90)", "oklch(83% 0.16 90)", "oklch(90% 0.11 90)", "oklch(95% 0.06 90)"]
+      },
+      "extreme-caution": {
+        "role": "secondary",
+        "displayName": "Extreme-Caution Orange",
+        "canonical": "#ee7f1b",
+        "tonalRamp": ["oklch(15% 0.05 55)", "oklch(28% 0.09 55)", "oklch(42% 0.13 55)", "oklch(56% 0.16 55)", "oklch(70% 0.17 55)", "oklch(80% 0.13 55)", "oklch(89% 0.08 55)", "oklch(95% 0.04 55)"]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Danger Red",
+        "canonical": "#d0302c",
+        "tonalRamp": ["oklch(15% 0.07 27)", "oklch(28% 0.12 27)", "oklch(42% 0.17 27)", "oklch(56% 0.20 27)", "oklch(67% 0.18 27)", "oklch(78% 0.12 27)", "oklch(88% 0.07 27)", "oklch(95% 0.03 27)"]
+      },
+      "extreme-danger": {
+        "role": "secondary",
+        "displayName": "Extreme-Danger Maroon",
+        "canonical": "#5e0f1c",
+        "tonalRamp": ["oklch(15% 0.06 15)", "oklch(31% 0.11 15)", "oklch(42% 0.13 15)", "oklch(54% 0.14 15)", "oklch(66% 0.13 15)", "oklch(78% 0.09 15)", "oklch(88% 0.05 15)", "oklch(95% 0.02 15)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#12141c",
+        "tonalRamp": ["oklch(15% 0.02 270)", "oklch(19% 0.02 270)", "oklch(32% 0.02 270)", "oklch(45% 0.02 270)", "oklch(58% 0.02 270)", "oklch(71% 0.02 270)", "oklch(84% 0.015 270)", "oklch(95% 0.008 270)"]
+      },
+      "ink-2": { "role": "neutral", "displayName": "Second Ink", "canonical": "#454b5e" },
+      "ground": { "role": "neutral", "displayName": "Card Stock", "canonical": "#f3f4f8" },
+      "panel": { "role": "neutral", "displayName": "Label White", "canonical": "#ffffff" },
+      "rule": { "role": "neutral", "displayName": "Rule", "canonical": "#c9cdd9" },
+      "rule-strong": { "role": "neutral", "displayName": "Strip Rule", "canonical": "#9aa1b5" },
+      "desk": { "role": "neutral", "displayName": "Desk", "canonical": "#dde0ea" },
+      "tint": { "role": "neutral", "displayName": "Tint", "canonical": "#e7eaf5" },
+      "placeholder": { "role": "neutral", "displayName": "Placeholder", "canonical": "#5d6377" }
+    },
+    "typographyMeta": {
+      "figure": { "displayName": "Figure", "purpose": "The stop-work times in the heading above the strip. The largest text in the app." },
+      "title": { "displayName": "Title", "purpose": "The setup screen's heading." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings under the strip, loading and failed titles, the shell title, the red-flag heading." },
+      "chip-code": { "displayName": "Chip code", "purpose": "The hour on each chip; the temperature uses the same width and tabular figures at 1.125rem, weight 650." },
+      "chip-name": { "displayName": "Chip name", "purpose": "The band name on each chip. Uppercase and 76% wide in Latin; 84% wide, untracked and 1.25 line height in Hindi." },
+      "body-large": { "displayName": "Body large", "purpose": "The plan text (max 65ch); also the size for inputs, buttons, day tabs and the red-flag text." },
+      "body": { "displayName": "Body", "purpose": "Default text, ledes and hints." },
+      "label": { "displayName": "Label", "purpose": "Field labels and legends." },
+      "small": { "displayName": "Small", "purpose": "Sub-labels, field notes, the cooling-point type, the source line, the current-hour tag. The smallest size in the app." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The one easing, used for every transition and animation." },
+      { "name": "state", "value": "160ms", "purpose": "Colour changes on buttons and segments; the primary button's 1px press." },
+      { "name": "roll", "value": "520ms, delay 30ms per row, clip-path inset(0 100% 0 0) to inset(0)", "purpose": "Each chip's colour field wipes in from the left once when its plan arrives." },
+      { "name": "sweep", "value": "1.5s infinite, translateX(-100%) to translateX(100%)", "purpose": "The loading bar. Under reduced motion it sits still at 40% width." }
+    ],
+    "breakpoints": [],
+    "lineWeights": [
+      { "name": "rule", "value": "1px", "purpose": "Between hour rows and list items." },
+      { "name": "control", "value": "2px", "purpose": "Control borders, the line between joined segments, link underlines." },
+      { "name": "emphasis", "value": "3px", "purpose": "The red-flag border, the current-hour outline, the focus ring (offset 2px)." }
+    ],
+    "container": { "maxWidth": "30rem", "gutter": "16px" }
+  },
+  "components": [
+    {
+      "name": "Hour chip",
+      "kind": "custom",
+      "refersTo": "hour-chip",
+      "description": "One row per shift hour: stop-work rail, band colour field, hour, printed band name, temperature. The band comes only from the API.",
+      "html": "<ol class=\"ds-strip\"><li class=\"ds-chip\" style=\"--ds-band: var(--extreme-caution)\"><span class=\"ds-chip-rail\"></span><span class=\"ds-chip-field\"></span><span class=\"ds-chip-hour\">10:00</span><span class=\"ds-chip-name\">Extreme caution</span><span class=\"ds-chip-temp\">38.7°C</span></li><li class=\"ds-chip ds-chip-stop\" style=\"--ds-band: var(--danger)\"><span class=\"ds-chip-rail\"></span><span class=\"ds-chip-field\"></span><span class=\"ds-chip-hour\">11:00</span><span class=\"ds-chip-name\">Danger</span><span class=\"ds-chip-temp\">40.1°C</span></li><li class=\"ds-chip ds-chip-stop\" style=\"--ds-band: var(--danger)\"><span class=\"ds-chip-rail\"></span><span class=\"ds-chip-field\"></span><span class=\"ds-chip-hour\">12:00</span><span class=\"ds-chip-name\">Danger</span><span class=\"ds-chip-temp\">41.4°C</span></li></ol>",
+      "css": ".ds-strip { margin: 0; padding: 0; list-style: none; font-family: var(--font); color: var(--ink); background: var(--ground); } .ds-chip { display: grid; grid-template-columns: 10px 22% 3.7rem 1fr auto; align-items: center; min-height: 48px; background: var(--panel); } .ds-chip + .ds-chip { border-top: 1px solid var(--rule-strong); } .ds-chip-rail { align-self: stretch; background: var(--ground); } .ds-chip + .ds-chip .ds-chip-rail { margin-top: -1px; } .ds-chip-stop .ds-chip-rail { background: var(--ink); } .ds-chip-field { align-self: stretch; margin-left: 4px; background: var(--ds-band, var(--rule)); } .ds-chip-hour, .ds-chip-temp { font-stretch: 80%; font-variant-numeric: tabular-nums; line-height: 1; } .ds-chip-hour { padding-left: 10px; font-size: 1.25rem; font-weight: 750; } .ds-chip-name { padding: 4px 6px; font-size: 1.125rem; font-weight: 750; font-stretch: 76%; letter-spacing: 0.01em; line-height: 1.1; text-transform: uppercase; } .ds-chip-temp { padding-right: 12px; font-size: 1.125rem; font-weight: 650; text-align: right; }"
+    },
+    {
+      "name": "Stop-work heading",
+      "kind": "custom",
+      "refersTo": "hour-chip",
+      "description": "The key to the bracket, directly above the strip: the same ink bar, a label, and the stop times at figure size.",
+      "html": "<section class=\"ds-summary\"><h2 class=\"ds-summary-head\"><span class=\"ds-summary-label\">Stop outdoor work</span> <span class=\"ds-summary-times\">11:00 to 18:00</span></h2></section>",
+      "css": ".ds-summary { display: grid; grid-template-columns: 10px 1fr; column-gap: 12px; padding-block: 18px 16px; padding-right: 16px; background: var(--ground); color: var(--ink); font-family: var(--font); } .ds-summary::before { content: ''; background: var(--ink); } .ds-summary-head { display: grid; gap: 3px; margin: 0; font-weight: 700; } .ds-summary-label { font-size: 1.0625rem; line-height: 22px; } .ds-summary-times { font-size: 2rem; font-weight: 800; font-stretch: 84%; font-variant-numeric: tabular-nums; line-height: 37px; }"
+    },
+    {
+      "name": "Red-flag warning",
+      "kind": "card",
+      "refersTo": "red-flag",
+      "description": "The fixed, human-written heat-stroke message, shown word for word whenever the API sends it. Never quiet.",
+      "html": "<section class=\"ds-redflag\"><h2 class=\"ds-redflag-title\">Important warning</h2><p class=\"ds-redflag-text\">The fixed warning text from the API appears here, word for word.</p></section>",
+      "css": ".ds-redflag { border: 3px solid var(--ink); background: var(--panel); color: var(--ink); font-family: var(--font); } .ds-redflag::before { content: ''; display: block; height: 16px; background: var(--danger); } .ds-redflag-title { margin: 0; padding: 12px 14px 0; font-size: 1.25rem; font-weight: 800; font-stretch: 88%; line-height: 1.25; } .ds-redflag-text { margin: 0; padding: 6px 14px 14px; font-size: 1.125rem; font-weight: 600; line-height: 1.5; white-space: pre-line; }"
+    },
+    {
+      "name": "Shell with day tabs",
+      "kind": "nav",
+      "refersTo": "shell",
+      "description": "The ultramarine header: site name, language switch, and the day tabs. The selected tab is a piece of the card below.",
+      "html": "<header class=\"ds-shell\"><div class=\"ds-shell-bar\"><h1 class=\"ds-shell-title\">Tonk Road site</h1><div class=\"ds-lang\"><label class=\"ds-lang-seg\"><input type=\"radio\" name=\"ds-lang\" checked><span>हिंदी</span></label><label class=\"ds-lang-seg\"><input type=\"radio\" name=\"ds-lang\"><span>English</span></label></div></div><div class=\"ds-tabs\"><label class=\"ds-tab\"><input type=\"radio\" name=\"ds-day\"><span>Today</span></label><label class=\"ds-tab\"><input type=\"radio\" name=\"ds-day\" checked><span>Tomorrow</span></label><label class=\"ds-tab\"><input type=\"radio\" name=\"ds-day\"><span>Past date</span></label></div></header>",
+      "css": ".ds-shell { background: var(--shell); color: var(--on-shell); font-family: var(--font); } .ds-shell-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 72px; padding: 0 16px; } .ds-shell-title { margin: 0; font-size: 1.25rem; font-weight: 700; font-stretch: 88%; line-height: 1.2; } .ds-lang { display: grid; grid-auto-columns: 1fr; grid-auto-flow: column; gap: 2px; border: 2px solid var(--on-shell); background: var(--on-shell); } .ds-tabs { display: grid; grid-auto-columns: 1fr; grid-auto-flow: column; padding-inline: 8px; } .ds-lang-seg, .ds-tab { position: relative; display: block; } .ds-lang-seg input, .ds-tab input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; } .ds-lang-seg span, .ds-tab span { display: grid; place-items: center; min-height: 48px; text-align: center; line-height: 1.25; transition: background-color 160ms var(--ease); } .ds-lang-seg span { padding: 4px 12px; background: var(--shell); color: var(--on-shell-2); font-size: 1rem; font-weight: 500; } .ds-lang-seg input:hover + span { background: var(--shell-hover); } .ds-lang-seg input:checked + span { background: var(--on-shell); color: var(--ink); font-weight: 800; } .ds-tab span { padding: 6px 12px; color: var(--on-shell-2); font-size: 1.125rem; font-weight: 700; font-stretch: 88%; } .ds-tab input:hover + span { background: rgb(255 255 255 / 0.12); color: var(--on-shell); } .ds-tab input:checked + span { background: var(--ground); color: var(--ink); } .ds-lang-seg input:focus-visible + span, .ds-tab input:focus-visible + span { position: relative; z-index: 1; outline: 3px solid var(--on-shell); outline-offset: 2px; }"
+    },
+    {
+      "name": "Segmented choice",
+      "kind": "input",
+      "refersTo": "segmented",
+      "description": "A two-or-three way choice as joined blocks over real radio inputs. Used for language and the direct-sun question on setup.",
+      "html": "<div class=\"ds-seg-row\"><label class=\"ds-seg\"><input type=\"radio\" name=\"ds-sun\" checked><span>Yes</span></label><label class=\"ds-seg\"><input type=\"radio\" name=\"ds-sun\"><span>No</span></label></div>",
+      "css": ".ds-seg-row { display: grid; grid-auto-columns: 1fr; grid-auto-flow: column; gap: 2px; border: 2px solid var(--ink); background: var(--ink); font-family: var(--font); } .ds-seg { position: relative; display: block; } .ds-seg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; } .ds-seg span { display: grid; place-items: center; min-height: 52px; padding: 6px 12px; background: var(--panel); color: var(--ink); font-size: 1.0625rem; font-weight: 600; line-height: 1.25; text-align: center; transition: background-color 160ms var(--ease); } .ds-seg input:hover + span { background: var(--tint); } .ds-seg input:checked + span { background: var(--ink); color: var(--panel); } .ds-seg input:focus-visible + span { position: relative; z-index: 1; outline: 3px solid var(--shell); outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Solid ink, full width. One per section: save the site, make the voice note, share it.",
+      "html": "<button class=\"ds-btn\">Make crew voice note</button>",
+      "css": ".ds-btn { display: block; width: 100%; min-height: 56px; padding: 12px 16px; border: 2px solid var(--ink); border-radius: 0; background: var(--ink); color: var(--panel); font-family: var(--font); font-size: 1.125rem; font-weight: 700; font-stretch: 92%; line-height: 1.25; cursor: pointer; transition: background-color 160ms var(--ease), border-color 160ms var(--ease), transform 160ms var(--ease); } .ds-btn:hover { border-color: var(--shell); background: var(--shell); } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: 3px solid var(--shell); outline-offset: 2px; } .ds-btn:disabled { border-color: var(--rule); background: var(--rule); color: var(--ink-2); cursor: default; transform: none; }"
+    },
+    {
+      "name": "Quiet button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "White with an ink border, for secondary actions: use my location, retry.",
+      "html": "<button class=\"ds-btn-quiet\">Use my location</button>",
+      "css": ".ds-btn-quiet { display: block; width: 100%; min-height: 56px; padding: 12px 16px; border: 2px solid var(--ink); border-radius: 0; background: var(--panel); color: var(--ink); font-family: var(--font); font-size: 1.125rem; font-weight: 700; font-stretch: 92%; line-height: 1.25; cursor: pointer; transition: background-color 160ms var(--ease), transform 160ms var(--ease); } .ds-btn-quiet:hover { background: var(--tint); } .ds-btn-quiet:active { transform: translateY(1px); } .ds-btn-quiet:focus-visible { outline: 3px solid var(--shell); outline-offset: 2px; }"
+    },
+    {
+      "name": "Link button",
+      "kind": "button",
+      "refersTo": "button-link",
+      "description": "Underlined ultramarine text with a 44px hit height, for footer actions and the fallback audio link.",
+      "html": "<button class=\"ds-btn-link\">Change site</button>",
+      "css": ".ds-btn-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: var(--shell); font-family: var(--font); font-size: 1.0625rem; font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; cursor: pointer; } .ds-btn-link:hover { color: var(--ink); } .ds-btn-link:focus-visible { outline: 3px solid var(--shell); outline-offset: 2px; }"
+    },
+    {
+      "name": "Error notice",
+      "kind": "card",
+      "refersTo": "notice",
+      "description": "An error sentence in a white box with a 2px ink border, placed directly above the button it relates to.",
+      "html": "<p class=\"ds-notice\" role=\"alert\">The error sentence from the copy files appears here.</p>",
+      "css": ".ds-notice { margin: 0; padding: 12px 14px; border: 2px solid var(--ink); background: var(--panel); color: var(--ink); font-family: var(--font); font-size: 1.0625rem; font-weight: 600; line-height: 1.5; }"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "White, square, 2px ink border, with its label above. Numeric, time and date fields use tabular figures at weight 600.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-site\">Site name</label><input id=\"ds-site\" class=\"ds-input\" placeholder=\"For example: Tonk Road site\"></div>",
+      "css": ".ds-field { font-family: var(--font); color: var(--ink); } .ds-field-label { display: block; margin: 0 0 8px; font-size: 1.0625rem; font-weight: 700; } .ds-input { width: 100%; min-height: 52px; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 0; background: var(--panel); color: var(--ink); font-family: var(--font); font-size: 1.125rem; caret-color: var(--shell); } .ds-input::placeholder { color: var(--placeholder); } .ds-input:focus-visible { outline: 3px solid var(--shell); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Shade Card",
+    "overview": "The working day is laid out like a paint-shop shade card. Every shift hour is one chip: a flat field of enamel colour joined to a white label that carries a condensed code (the hour), the printed shade name (the risk band) and a tabular figure (the temperature). Read top to bottom, the strip shows the day changing colour, and a black bar in the left gutter brackets the hours when outdoor work stops. The card sits on a pale card-stock ground under an ultramarine shell that holds the site name, the language switch and the day tabs.\n\nThe system is built for one reader: a site supervisor holding an Android phone in direct sunlight. That decides everything. Type is large and heavy, colour is opaque and never blended, edges are hard, and every control is a standard one drawn square. It is dense where the day is (eleven 48px rows fit a 360 by 800 screen with the shell and the stop-work heading above them) and plain everywhere else. It does not look like a weather app (no suns, clouds, sky gradients or forecast cards) and it does not look like an office dashboard (no metric tiles, no charts).\n\nThe app displays; it never decides. Every band, temperature, time and line of safety text on screen is what the API returned, shown without recomputing, rounding or rewording. The design system styles those values. It has no say over them.",
+    "keyCharacteristics": [
+      "One strip of paint chips is the product; everything else on the plan screen supports reading it.",
+      "Five flat band colours that mean risk and nothing else, under one ultramarine shell that is deliberately off that scale.",
+      "Square corners, flat colour, hairline and ink rules. No gradients, no shadows.",
+      "One typeface for Devanagari and Latin, condensed with its width axis so long band names fit a phone row.",
+      "Every band reads without colour: its name and temperature are printed as text on each chip.",
+      "An 8px vertical grid for the shell and the strip, so 1px rules stay one even weight on real phones."
+    ],
+    "rules": [
+      { "name": "The Reserved Scale Rule", "body": "The five band colours belong to the risk bands. They colour an hour's chip field, and Danger Red marks the fixed red-flag warning. They are never used for buttons, links, headings, selection states, decoration or branding inside the app.", "section": "colors" },
+      { "name": "The Off-Scale Shell Rule", "body": "Anything the app needs to colour for its own purposes (focus, links, progress, the header) uses Ultramarine Shell or ink. If a new element seems to want green, yellow, orange or red, it is either a band or it is ink.", "section": "colors" },
+      { "name": "The Name In Print Rule", "body": "No band is ever shown by colour alone. Its name and its temperature are printed as text on the same row.", "section": "colors" },
+      { "name": "The One Family Rule", "body": "Anek Devanagari sets everything in both scripts. No second typeface, no monospace for figures; tabular figures come from the same font.", "section": "typography" },
+      { "name": "The Joined Letters Rule", "body": "Devanagari is never letter-spaced and never relies on capitals. Any style that uses uppercase or tracking for Latin needs a `:lang(hi)` counterpart that removes both and gives the line more height.", "section": "typography" },
+      { "name": "The Width Does The Work Rule", "body": "When text must fit a narrow column, narrow it with the width axis (no lower than 76%) before shrinking it. Nothing in the app is set below 0.875rem.", "section": "typography" },
+      { "name": "The Eight Grid Rule", "body": "Rows, the shell bar, tabs and the stop-work heading are multiples of 8px tall. Phones scale CSS pixels by 2.625, 2.75 or 3, and only multiples of 8 land on whole device pixels at all three, which keeps every 1px rule the same weight and the bracket unbroken. A new element placed above or inside the strip must keep to it.", "section": "layout" },
+      { "name": "The Strip First Rule", "body": "On the plan screen the full shift is visible without scrolling on a 360 by 800 phone. Nothing is inserted between the shell and the strip except the stop-work heading.", "section": "layout" },
+      { "name": "The Flat Enamel Rule", "body": "Colour is one opaque value per surface and is never blended, tinted, faded or overlaid. A band colour at reduced opacity is a different, undefined colour and is not allowed.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do colour an hour only from the `band` value the API returned, and print that band's name and temperature as text on the same row.",
+      "Do use Ultramarine Shell or ink for anything the app itself needs to colour: focus, links, progress, headers, selection states.",
+      "Do keep every corner square and every colour flat and opaque.",
+      "Do keep the shell bar, tabs, stop-work heading and hour rows on multiples of 8px, and keep the full shift visible without scrolling on a 360 by 800 phone.",
+      "Do set everything in Anek Devanagari, and narrow text with the width axis (down to 76%) before making it smaller.",
+      "Do give any uppercase or letter-spaced Latin style a `:lang(hi)` counterpart with no tracking and more line height.",
+      "Do keep the red-flag warning as it is built: 3px ink border, solid Danger Red bar, heavy type, its text shown word for word.",
+      "Do use native controls (radio inputs, date and time fields, `<audio>`) drawn square, with touch targets of at least 44px.",
+      "Do respect `prefers-reduced-motion` for every animation."
+    ],
+    "donts": [
+      "Don't use a band colour for a button, link, heading, badge, illustration or any decoration.",
+      "Don't blend, tint, fade or overlay a band colour, and don't add gradients or shadows anywhere.",
+      "Don't show a band by colour alone.",
+      "Don't compute, round or reword a band, temperature, time or safety text in the app; show what the API returned.",
+      "Don't soften, shorten, collapse, shrink or restyle the red-flag warning into something easy to miss.",
+      "Don't add suns, clouds, sky gradients or forecast cards, and don't add metric tiles or charts.",
+      "Don't round corners, including on inputs, buttons and the audio player.",
+      "Don't letter-space Devanagari or set any text below 0.875rem.",
+      "Don't treat the yellow FIXTURE DATA banner or the `?fixture=` modes as product design. They exist only when `VITE_FIXTURES=1` and never ship."
+    ]
+  }
+}
