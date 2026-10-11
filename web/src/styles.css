@@ -1035,6 +1035,29 @@ input {
 }
 
 /* The fixed heat-stroke warning. Its text is never changed or shortened. */
+/* Stop now: the one solid block of danger colour, shown only during the stop-work window. */
+.stopnow {
+  display: grid;
+  gap: 4px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.stopnow-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.stopnow-until {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
 .redflag {
   display: grid;
   gap: 8px;

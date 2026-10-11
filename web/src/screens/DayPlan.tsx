@@ -2,9 +2,11 @@ import type { ReadyPlan } from '../api';
 import { Cooling } from '../components/Cooling';
 import { Failed } from '../components/Failed';
 import { Hero } from '../components/Hero';
+import { isStopped } from '../components/hours';
 import { HourList } from '../components/HourList';
 import { Loading } from '../components/Loading';
 import { RedFlag } from '../components/RedFlag';
+import { StopNow } from '../components/StopNow';
 import { VoiceNote } from '../components/VoiceNote';
 import type { Strings } from '../copy';
 import { usePlan } from '../usePlan';
@@ -49,8 +51,11 @@ interface ViewProps {
 
 // Everything below shows what the API returned. Nothing here decides a band, a time or a warning.
 function PlanView({ t, siteId, plan, voiceStalled, nowHour, onVoiceRequested }: ViewProps) {
+  const stop = plan.stop_window;
   return (
     <div className="plan">
+      {stop && nowHour && isStopped(`${nowHour}:00`, stop) && <StopNow t={t} stop={stop} />}
+
       <Hero t={t} maxBand={plan.max_band} stop={plan.stop_window} hours={plan.hours} nowHour={nowHour} />
 
       {plan.red_flag && <RedFlag t={t} text={plan.red_flag} />}
