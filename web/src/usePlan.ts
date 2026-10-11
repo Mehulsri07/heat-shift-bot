@@ -6,7 +6,8 @@ const GIVE_UP_MS = 60_000;
 
 export type PlanState =
   | { phase: 'loading' }
-  | { phase: 'ready'; plan: ReadyPlan }
+  // `voiceStalled` is set when the voice note is still pending after the give-up time, so the app can offer it again.
+  | { phase: 'ready'; plan: ReadyPlan; voiceStalled: boolean }
   // `code` is an API error code, or `timeout` / `plan_failed` / `network`.
   | { phase: 'failed'; code: string };
 
@@ -32,7 +33,9 @@ export function usePlan(siteId: string, date: string) {
     (async () => {
       try {
         // A refresh keeps the plan for this date on screen; anything else shows loading.
-        setState((prev) => (prev.phase === 'ready' && prev.plan.date === date ? prev : { phase: 'loading' }));
+        setState((prev) =>
+          prev.phase === 'ready' && prev.plan.date === date ? { ...prev, voiceStalled: false } : { phase: 'loading' },
+        );
         // Safe to repeat: the API reuses a plan that exists or is already being built.
         await requestPlan(siteId, date);
         while (!cancelled) {
@@ -40,12 +43,13 @@ export function usePlan(siteId: string, date: string) {
           if (cancelled) return;
           if (plan.status === 'failed') return setState({ phase: 'failed', code: 'plan_failed' });
           if (plan.status === 'ready') {
-            setState({ phase: 'ready', plan });
+            setState({ phase: 'ready', plan, voiceStalled: false });
             if (plan.audio_status !== 'pending') return;
           }
           if (Date.now() - startedAt > GIVE_UP_MS) {
-            // A voice note that never arrives leaves the ready plan on screen.
             if (plan.status !== 'ready') setState({ phase: 'failed', code: 'timeout' });
+            // A voice note that never arrives leaves the ready plan on screen, with its button offered again.
+            else setState({ phase: 'ready', plan, voiceStalled: true });
             return;
           }
           await sleep(POLL_MS);

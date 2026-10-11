@@ -7,6 +7,7 @@
 //   voice   the voice note is already made
 //   failed  the plan failed
 //   slow    the plan never arrives (the loading state)
+//   stuck   the plan is ready but its voice note never arrives (the stalled-voice state)
 import type { Plan, ReadyPlan, Site, SiteInput } from '../api';
 import sunJson from './plan-2025-05-20-direct-sun.json';
 import planJson from './plan-2025-05-20.json';
@@ -86,7 +87,11 @@ export const fixtureApi = {
     const { _fixture: _note, ...plan } = mode === 'sun' || site?.direct_sun ? sunJson : planJson;
     const voiceStarted = mode === 'voice' ? 0 : voiceAt.get(date);
     const audio_status =
-      voiceStarted === undefined ? 'none' : Date.now() - voiceStarted < READY_AFTER_MS ? 'pending' : 'ready';
+      voiceStarted === undefined
+        ? 'none'
+        : mode === 'stuck' || Date.now() - voiceStarted < READY_AFTER_MS
+          ? 'pending'
+          : 'ready';
     return {
       ...(plan as unknown as ReadyPlan),
       site_id: siteId,
