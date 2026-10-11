@@ -4,6 +4,11 @@ An Android app that tells a construction-site supervisor which hours are safe fo
 
 Team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon, Heat and Water track.
 
+## Try it
+
+- The app in a browser: https://d1gu9h8j3658ef.cloudfront.net
+- The Android app: https://d1gu9h8j3658ef.cloudfront.net/download/app.apk (not on the Play Store, so Android shows an unknown-source warning)
+
 ## The problem
 
 Outdoor workers in Rajasthan keep working through dangerous afternoon heat because nobody turns the weather forecast into a shift decision. One supervisor sets the hours for a whole crew, so the app is built for that person. Workers get the plan as a voice note on WhatsApp: no app, no reading.
@@ -23,8 +28,9 @@ EventBridge Scheduler --> planner Lambda (Strands agent + risk engine)
 ```
 
 - The supervisor sets up a site once; the app asks the API for a plan and polls until it is ready.
-- A Strands agent on Amazon Bedrock fetches the hourly forecast and passes it to the risk engine.
-- The risk engine is plain, tested Python (NWS heat index plus IMD temperature cut-offs). **The model never decides a band, a temperature or a time; it only words what the engine returns**, and a guard rejects any number the engine did not produce.
+- The planner fetches the hourly forecast from Open-Meteo and the risk engine scores every shift hour.
+- A Strands agent on Amazon Bedrock words the plan from those scores.
+- The risk engine is plain, tested Python (NWS heat index plus IMD temperature cut-offs). **The model never decides a band, a temperature or a time; it only words what the engine returns**. A guard rejects any number the engine did not produce and falls back to a fixed template.
 - Amazon Polly turns the plan into a Hindi voice note to share with the crew.
 - On dangerous days the plan carries a fixed, human-written heat-stroke warning that never passes through the model.
 
@@ -43,7 +49,7 @@ pytest
 
 ```bash
 sam build
-sam deploy --parameter-overrides BedrockModelId=<Claude Haiku model or inference profile ID>
+sam deploy
 ```
 
 ```bash
@@ -52,7 +58,7 @@ npm --prefix web run build
 aws s3 sync web/dist s3://<WebBucketName> --delete --exclude "download/*"
 ```
 
-`WebBucketName` and the app's link are printed by the deploy.
+`WebBucketName` and the app's link are printed by the deploy. The Bedrock model ID is set in `samconfig.toml`.
 
 ## Attribution
 
