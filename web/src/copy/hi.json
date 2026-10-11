@@ -49,6 +49,8 @@
   "hero_no_stop": "इस दिन काम रोकने का समय नहीं है",
   "hero_level_label": "दिन का सबसे ऊँचा स्तर",
   "stop_mark": "बंद",
+  "stop_now_title": "अभी बाहर का काम बंद करें",
+  "stop_now_until": "{end} बजे तक",
   "now": "अभी",
   "temp": "{t}°C",
   "heat_index": "heat index {hi}°C",

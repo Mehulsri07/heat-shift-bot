@@ -49,6 +49,8 @@
   "hero_no_stop": "No stop-work window on this day",
   "hero_level_label": "Highest level",
   "stop_mark": "Stop",
+  "stop_now_title": "Stop outdoor work now",
+  "stop_now_until": "Until {end}",
   "now": "Now",
   "temp": "{t}°C",
   "heat_index": "Heat index {hi}°C",
