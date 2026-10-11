@@ -32,7 +32,7 @@ EventBridge Scheduler --> planner Lambda (Strands agent + risk engine)
 - A Strands agent on Amazon Bedrock words the plan from those scores.
 - The risk engine is plain, tested Python (NWS heat index plus IMD temperature cut-offs). **The model never decides a band, a temperature or a time; it only words what the engine returns**. A guard rejects any number the engine did not produce and falls back to a fixed template.
 - Amazon Polly turns the plan into a Hindi voice note to share with the crew.
-- On dangerous days the plan carries a fixed, human-written heat-stroke warning that never passes through the model.
+- On dangerous days the plan carries a fixed heat-stroke warning, checked by the team, that the planning model never sees or rewrites.
 
 ## Built with
 
