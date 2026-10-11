@@ -1,6 +1,6 @@
-# Heat-safe shift planner (name TBD)
+# Off the Heat
 
-An Android app that tells a construction-site supervisor which hours are safe for outdoor work in extreme heat, and turns the plan into a Hindi voice note for the crew.
+A heat-safe shift planner: an Android app that tells a construction-site supervisor which hours are safe for outdoor work in extreme heat, and turns the plan into a Hindi voice note for the crew.
 
 Team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon, Heat and Water track.
 
@@ -23,24 +23,24 @@ Amazon CloudFront
         |-- /api/* ----> API Gateway + api Lambda --> Amazon DynamoDB
                                 |  async
                                 v
-EventBridge Scheduler --> planner Lambda (Strands agent + risk engine)
-                                |--> Open-Meteo, Amazon Bedrock, Amazon Polly, Amazon S3
+EventBridge Scheduler --> planner Lambda (risk engine + plan templates)
+                                |--> Open-Meteo, Amazon Polly, Amazon S3
 ```
 
 - The supervisor sets up a site once; the app asks the API for a plan and polls until it is ready.
 - The planner fetches the hourly forecast from Open-Meteo and the risk engine scores every shift hour.
-- A Strands agent on Amazon Bedrock words the plan from those scores.
-- The risk engine is plain, tested Python (NWS heat index plus IMD temperature cut-offs). **The model never decides a band, a temperature or a time; it only words what the engine returns**. A guard rejects any number the engine did not produce and falls back to a fixed template.
+- The plan text is built from fixed Hindi and English sentences, filled with the engine's numbers.
+- The risk engine is plain, tested Python (NWS heat index plus IMD temperature cut-offs). **No AI model is involved: the same weather always gives the same plan**, and the tests check that every number in the plan text came from the engine.
 - Amazon Polly turns the plan into a Hindi voice note to share with the crew.
-- On dangerous days the plan carries a fixed heat-stroke warning, checked by the team, that the planning model never sees or rewrites.
+- On dangerous days the plan carries a fixed heat-stroke warning, checked by the team, shown word for word.
 
 ## Built with
 
-Strands Agents SDK and AWS SAM CLI (both AWS open source), AWS Lambda, Amazon API Gateway, Amazon CloudFront, Amazon Bedrock (Claude Haiku), Amazon Polly, Amazon DynamoDB, Amazon S3 and Amazon EventBridge Scheduler. The app is React, Vite and TypeScript, packaged for Android with Capacitor.
+AWS SAM CLI (AWS open source), AWS Lambda, Amazon API Gateway, Amazon CloudFront, Amazon Polly, Amazon DynamoDB, Amazon S3 and Amazon EventBridge Scheduler. The app is React, Vite and TypeScript, packaged for Android with Capacitor.
 
 ## Run it
 
-Needs Python 3.11+, Node.js, AWS CLI v2, SAM CLI, Docker, and Bedrock access to Claude Haiku in `us-east-1`.
+Needs Python 3.11+, Node.js, AWS CLI v2, SAM CLI and Docker.
 
 ```bash
 pip install -r requirements.txt
@@ -58,7 +58,7 @@ npm --prefix web run build
 aws s3 sync web/dist s3://<WebBucketName> --delete --exclude "download/*"
 ```
 
-`WebBucketName` and the app's link are printed by the deploy. The Bedrock model ID is set in `samconfig.toml`.
+`WebBucketName` and the app's link are printed by the deploy.
 
 ## Attribution
 

@@ -2,11 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Heat-safe shift planner (app hosting, JSON API, planner)
 
-Parameters:
-  BedrockModelId:
-    Type: String
-    Description: Bedrock model ID or inference profile ID for Claude Haiku
-
 Globals:
   Function:
     Runtime: python3.11
@@ -18,7 +13,6 @@ Globals:
         PLANS_TABLE: !Ref PlansTable
         COOLING_TABLE: !Ref CoolingPointsTable
         AUDIO_BUCKET: !Ref AudioBucket
-        BEDROCK_MODEL_ID: !Ref BedrockModelId
         POLLY_VOICE_ID: Kajal
         TZ_NAME: Asia/Kolkata
 
@@ -36,7 +30,7 @@ Resources:
           - POST
         AllowHeaders:
           - content-type
-      # The API is public and triggers paid Bedrock calls.
+      # The API is public and each new plan costs Lambda time and a weather call.
       DefaultRouteSettings:
         ThrottlingBurstLimit: 20
         ThrottlingRateLimit: 10
@@ -89,12 +83,6 @@ Resources:
         - Statement:
             - Effect: Allow
               Action: polly:SynthesizeSpeech
-              Resource: '*'
-            # Inference profiles fan out to model ARNs in several regions, hence '*'.
-            - Effect: Allow
-              Action:
-                - bedrock:InvokeModel
-                - bedrock:InvokeModelWithResponseStream
               Resource: '*'
       Events:
         Daily:

@@ -12,5 +12,3 @@ use_container = true
 capabilities = "CAPABILITY_IAM"
 resolve_s3 = true
 confirm_changeset = false
-# Claude Haiku 4.5 through its US inference profile. Change it here, not in the code.
-parameter_overrides = "BedrockModelId=us.anthropic.claude-haiku-4-5-20251001-v1:0"
