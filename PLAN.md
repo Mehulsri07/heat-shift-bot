@@ -140,9 +140,9 @@ For tracking. Tick your own boxes as you finish them; the Timeline above says wh
 - [x] `api.py` with its tests passing, and `voice.py`
 - [x] App scaffold in `web/`, and a debug APK built from it
 - [ ] AWS profile, budget alert and Bedrock access (Thu night)
-- [ ] First deploy done and the live link posted (Fri 10:00)
+- [x] First deploy done and the live link posted (Fri 10:00)
 - [ ] Bedrock-only access handed to A (Fri 10:00)
-- [ ] Redeployed with A's planner (Fri evening)
+- [x] Redeployed with A's planner (Fri evening)
 - [ ] APK built from B's code and run on a real phone: location prompt and share sheet checked (Fri evening)
 - [ ] APK download hosted; cooling points seeded; 06:00 schedule checked; logs clean (Fri night)
 - [ ] README finalised and architecture slide made (Sat 12:00)
@@ -501,7 +501,7 @@ repo-root/
 - **App ID and name.** The Android app ID is `com.opuscube.app` and must not change once people have installed the app. The display name `OpusCube` is a placeholder, set in `web/capacitor.config.json` and `web/android/app/src/main/res/values/strings.xml`.
 - **Capacitor's config is JSON on purpose.** Its CLI cannot load a `.ts` config with TypeScript 7 on Node 22.
 - **App environment.** Copy `web/.env.example` to `web/.env.local` and fill it in; `.env.local` is never committed. Set `VITE_FIXTURES=1` there to run the app on the labelled fixtures in `web/src/fixtures/` without a backend; a production build must leave it unset.
-- **App design.** The look is recorded in `DESIGN.md` (colours, type, components and the rules for using them), `PRODUCT.md` (product facts) and `.impeccable/surfaces/` (the chosen direction, "Shade Card"): each hour is a flat chip of colour with its band name and temperature printed beside it. Keep new screens inside that system: square corners, flat colour, the five band colours used only for bands.
+- **App design.** The look is recorded in `DESIGN.md` (colours, type, components and the rules for using them), `PRODUCT.md` (product facts) and `.impeccable/surfaces/` (the first direction, "Shade Card"). The app was redesigned after those files were written (tinted band cards, a day timeline, rounded tiles), so they are out of date; `web/src/styles.css` is the truth. What still holds: every hour shows its band name and temperature as text as well as colour, and the five band colours are used only for bands.
 
 ### Setup, in order
 
