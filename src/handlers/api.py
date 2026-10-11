@@ -191,7 +191,7 @@ def get_plan(body: dict, site_id: str, day: str) -> dict:
     out.update({field: plan.get(field) for field in PLAN_FIELDS})
     out["cooling_points"] = plan.get("cooling_points", [])
     # The red-flag text is fixed and human-reviewed. It is attached here, from its own
-    # human-written file, so it never passes through the model. A missing text is an error, not a blank.
+    # fixed file, so it never passes through the model. A missing text is an error, not a blank.
     out["red_flag"] = None
     if plan.get("max_band") in RED_FLAG_BANDS:
         out["red_flag"] = _red_flag(_site(site_id)["language"])

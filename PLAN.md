@@ -61,7 +61,7 @@ Datasets and lightweight coding only.
 - `data/cooling_points_jaipur.json`: 10 hand-verified cooling points in Jaipur.
 - `cooling.py`: nearest cooling points from DynamoDB by straight-line distance, with a test.
 - `scripts/seed_cooling_points.py` (already written; D owns it now), which loads that file.
-- `src/copy/red_flag.json`: the red-flag message in Hindi and English, typed in by hand and checked by a native speaker. No Claude session may write or reword it.
+- `src/copy/red_flag.json`: the red-flag message in Hindi and English. Drafted on 11 October at Mehul's instruction; it must be read and approved by a native speaker. No Claude session may reword it after that review.
 - Data check: compare the numbers the app shows for the replay date against the raw Open-Meteo response.
 
 ### Unassigned work (needs an owner)
