@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          "brag-output/work/video.html"
+        ],
+        "createdAt": "2026-10-11T16:35:25.477Z",
+        "reason": "Claude: video title cards; the tight leading is on large display headlines, not body text"
+      },
+      {
+        "rule": "buried-raster",
+        "value": "*",
+        "files": [
+          "brag-output/work/video.html"
+        ],
+        "createdAt": "2026-10-11T16:35:25.765Z",
+        "reason": "Claude: the Hindi screenshots start at opacity 0 and are crossfaded in by the frame renderer"
+      }
+    ]
+  }
+}

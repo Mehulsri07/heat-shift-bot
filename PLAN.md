@@ -6,6 +6,11 @@ We are building an Android app that tells a construction-site supervisor which h
 
 It is team OpusCube's entry for the WeMakeDevs x AWS environmental hackathon (Heat and Water track), due 11 October 2026. This doc is the single source of truth for humans and for every Claude Code session on the team.
 
+### Decisions made on 11 October
+
+- **The app is called Off the Heat.**
+- **No AI model.** Bedrock and the Strands agent were removed: `src/agent.py` is gone, `planner` builds the plan text from the templates in `src/copy/`, and `guard.py` holds those templates plus the number check the tests run on them. Wherever the sections below mention the agent, Bedrock, Claude Haiku, `BEDROCK_MODEL_ID` or `strands-agents`, read "the template text". The backend's only dependencies are `boto3` and `requests`.
+
 ### Open decisions
 
 - **App name.** Needed for the icon label. The scaffold uses the placeholder `OpusCube` until the team decides.

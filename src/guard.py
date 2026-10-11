@@ -1,7 +1,7 @@
-"""Output guard and template fallback.
+"""Plan text: built from the fixed copy and the risk engine's output, with a check on its numbers.
 
-The model writes the plan text, but every number in it must come from the risk engine or from the fixed
-copy. A text that breaks that rule is thrown away and the template text is used instead.
+No model writes the plan. `template` fills fixed sentences with the engine's numbers; `grounded` and
+`within_limits` are the checks the tests run on that text, so a copy change cannot introduce a number of its own.
 """
 
 from __future__ import annotations

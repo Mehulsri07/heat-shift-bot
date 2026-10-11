@@ -1,4 +1,4 @@
-"""Planner: building plans, voice notes and the daily run. AWS, Open-Meteo, Bedrock and Polly are all faked.
+"""Planner: building plans, voice notes and the daily run. AWS, Open-Meteo and Polly are all faked.
 
 Every site, hour and text below is a made-up TEST FIXTURE, not real forecast data.
 """
@@ -7,7 +7,6 @@ from typing import Any
 
 import pytest
 
-import agent
 import cooling
 import forecast
 import guard
@@ -70,8 +69,6 @@ def world(monkeypatch: pytest.MonkeyPatch) -> dict:
     monkeypatch.setattr(cooling, "nearest", lambda lat, lon, limit: [
         {"name": "FIXTURE water point", "type": "water", "lat": 26.91, "lon": 75.79, "distance_km": 0.4},
     ])
-    monkeypatch.setattr(agent, "write_texts", lambda score, language: (
-        "Stop outdoor work from 12:00 to 14:00.", "Aaj ki garmi ki yojana."))
 
     def make_voice(text: str, language: str) -> str:
         voiced.append((text, language))
@@ -95,8 +92,9 @@ def test_plan_mode_saves_a_ready_plan(world: dict) -> None:
     assert saved["status"] == "ready" and saved["source"] == "forecast"
     assert saved["stop_window"] == {"start": "12:00", "end": "14:00"}
     assert saved["max_band"] == "DANGER"
-    assert saved["plan_text"] == "Stop outdoor work from 12:00 to 14:00."
-    assert saved["voice_text"] == "Aaj ki garmi ki yojana."
+    assert saved["plan_text"].startswith("Stop outdoor work from 12:00 to 14:00.")
+    assert guard.grounded([saved["plan_text"], saved["voice_text"]], {
+        "hours": saved["hours"], "stop_window": saved["stop_window"], "max_band": saved["max_band"]})
     assert saved["cooling_points"][0]["name"] == "FIXTURE water point"
     assert saved["audio_status"] == "none"
     assert len(saved["hours"]) == 11  # the 07:00 to 17:59 shift, one row per hour
@@ -105,25 +103,6 @@ def test_plan_mode_saves_a_ready_plan(world: dict) -> None:
 def test_a_past_date_is_a_replay(world: dict) -> None:
     planner.handler({"site_id": SITE_ID, "date": "2025-05-20", "mode": "plan"}, None)
     assert row(world, "2025-05-20")["source"] == "replay"
-
-
-def test_an_ungrounded_agent_text_falls_back_to_the_template(world: dict, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(agent, "write_texts", lambda score, language: ("It will hit 47.5 degrees.", "Garmi."))
-    planner.handler({"site_id": SITE_ID, "date": today(), "mode": "plan"}, None)
-    saved = row(world, today())
-    assert saved["status"] == "ready"
-    assert "47.5" not in saved["plan_text"]
-    assert guard.grounded([saved["plan_text"], saved["voice_text"]], {
-        "hours": saved["hours"], "stop_window": saved["stop_window"], "max_band": saved["max_band"]})
-
-
-def test_an_agent_error_falls_back_to_the_template(world: dict, monkeypatch: pytest.MonkeyPatch) -> None:
-    def broken(score: dict, language: str) -> tuple[str, str]:
-        raise RuntimeError("bedrock unavailable")
-
-    monkeypatch.setattr(agent, "write_texts", broken)
-    planner.handler({"site_id": SITE_ID, "date": today(), "mode": "plan"}, None)
-    assert row(world, today())["status"] == "ready"
 
 
 def test_a_cooling_error_does_not_block_the_plan(world: dict, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -149,7 +128,7 @@ def test_a_forecast_failure_marks_the_plan_failed(world: dict, monkeypatch: pyte
 def test_voice_mode_makes_the_note_in_hindi(world: dict) -> None:
     planner.handler({"site_id": SITE_ID, "date": today(), "mode": "plan"}, None)
     planner.handler({"site_id": SITE_ID, "date": today(), "mode": "voice"}, None)
-    assert world["voiced"] == [("Aaj ki garmi ki yojana.", "hi")]
+    assert world["voiced"] == [(row(world, today())["voice_text"], "hi")]
     saved = row(world, today())
     assert saved["audio_status"] == "ready" and saved["audio_s3_key"] == "voice/fixture.mp3"
 

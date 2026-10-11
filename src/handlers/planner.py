@@ -14,7 +14,6 @@ from typing import Any
 
 import boto3
 
-import agent
 import cooling
 import forecast
 import guard
@@ -83,13 +82,7 @@ def build_plan(site_id: str, day: str) -> None:
     hourly = forecast.get_hourly(float(site["lat"]), float(site["lon"]), day)
     score = risk.score_hours(hourly, bool(site["direct_sun"]), site["shift_start"], site["shift_end"])
 
-    try:
-        plan_text, voice_text = agent.write_texts(score, site["language"])
-        if not (guard.grounded([plan_text, voice_text], score) and guard.within_limits(plan_text, voice_text)):
-            raise ValueError("the agent's text broke the output rules")
-    except Exception:
-        log.exception("agent text rejected; using the template for site %s on %s", site_id, day)
-        plan_text, voice_text = guard.template(score, site["language"])
+    plan_text, voice_text = guard.template(score, site["language"])
 
     today = _now().date()
     source = "replay" if date.fromisoformat(day) < today else "forecast"

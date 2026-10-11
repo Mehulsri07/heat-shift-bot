@@ -21,3 +21,4 @@ web/dist/
 .impeccable/mocks/
 .impeccable/build/
 .playwright-mcp/
+brag-output/
